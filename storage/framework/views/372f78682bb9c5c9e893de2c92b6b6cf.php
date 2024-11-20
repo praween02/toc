@@ -1,0 +1,1 @@
+<?php /**PATH D:\development\htdocs\projects\toc\portal\resources\views/partials/right-side-bar.blade.php ENDPATH**/ ?>

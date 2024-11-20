@@ -1,0 +1,2 @@
+<img <?php echo e($attributes->merge(['width' => '250', 'class' => ''])); ?> />
+<?php /**PATH D:\development\htdocs\projects\toc\portal\resources\views/components/authentication-card-logo.blade.php ENDPATH**/ ?>

@@ -1,0 +1,322 @@
+/* validation js */
+
+
+$(document).ready(function() {
+
+		$('#sbmitbtn').on('click', function (e) {
+		    $("#6g_user_form").valid();
+		    let ele = $("#6g_user_form :input.error:first");
+		    if (ele.is(':hidden')) {
+		        let tabToShow = ele.closest('.tab-pane');
+		        $('#6g_user_form .nav-tabs button#' + tabToShow.attr('id') + '-tab').tab('show');
+		    }
+		});
+
+		$.validator.addMethod('filesize', function (value, element, param) {
+		    return this.optional(element) || (element.files[0].size <= param * 1000000)
+		}, 'File size must be less than {0} MB');
+
+
+		$.validator.addMethod("validatePdf", function(value, element) {
+                let fileExtension = ['pdf'];
+                return ($.inArray(value.split('.').pop().toLowerCase(), fileExtension) != -1)
+        }, "Please select a valid file (PDF are allowed)");
+
+		$("#organization_name, #nodal_contact_person, #designation, #collaborator_name, #collaborator_designation, #collaborator_location_of_head_office_branch, #proposed_project_title, #primary_objective_of_module_sub_system_product_solution_proposed, #any_regulatory_approval").keydown(function(event){
+	        let inputValue = event.which;
+	        if (!(inputValue >= 65 && inputValue <= 120) && (inputValue != 32 && inputValue != 8 && inputValue != 9)) { 
+	            event.preventDefault(); 
+	        }
+	    });
+
+	    $("#contact_no, #pin_no, #collaborator_contact_no, #collaborator_size_company, #collaborator_company_turnover, #fund_expected").keydown(function(event){
+	        let inputValue = event.which;
+	        if ( ! ((inputValue >= 48 && inputValue <= 57) || inputValue == 8 || (inputValue >= 96 && inputValue <= 105))) {
+	            event.preventDefault();
+	        }
+	    });
+
+		$.validator.addMethod("lettersonly", function(value, element) {
+		  	return this.optional(element) || /^[a-z ]+$/i.test(value);
+		}, "Please enter only letters and space"); 
+
+		// validate signup form on keyup and submit
+		$("#6g_user_form").validate({
+			ignore: [],  // ignore NOTHING
+			rules: {
+				organization_name: {
+					required: true,
+					lettersonly: true
+				},
+				nodal_contact_person: {
+					required: true,
+					lettersonly: true
+				},
+				designation: {
+					required: true,
+					lettersonly: true
+				},
+
+				authorization_letter: {
+                    required: true,
+                    validatePdf: true,
+                    filesize: 2,
+                },
+
+                bio_data_professional_credentials: {
+                    required: true,
+                    validatePdf: true,
+                    filesize: 2,
+                },
+
+				contact_no: {
+					required: true,
+					digits: true,
+					maxlength: 10
+				},
+				email_id: {
+					required: true,
+					email: true,
+				},
+
+				address: {
+					required: true,
+				},
+
+				pin_no: {
+					required: true,
+					digits: true,
+					maxlength: 10
+				},
+
+				collaborator_name: {
+					lettersonly: true
+				},
+				collaborator_designatio: {
+					lettersonly: true
+				},
+				collaborator_contact_no: {
+					digits: true,
+					maxlength: 10
+				},
+				collaborator_email_i: {
+					email: true,
+				},
+
+				collaborator_biodata: {
+                    validatePdf: true,
+                    filesize: 2,
+                },
+
+                collaborator_company_turnover_attachment: {
+                    validatePdf: true,
+                    filesize: 2,
+                },
+
+				collaborator_area_of_work: {
+					lettersonly: true,
+				},
+				collaborator_size_company: {
+					digits: true
+				},
+
+				collaborator_location_of_head_office_branch: {
+					lettersonly: true
+				},
+
+				collaborator_company_turnover: {
+					digits: true
+				},
+
+				/* Project Details */
+
+				proposed_project_title: {
+					required: true,
+					lettersonly: true
+				},
+				collaboration_customers_clients: {
+					required: true
+				},
+
+				list_of_ipr_awards_paper_published: {
+					required: true
+				},
+
+				relevant_standards_standard_body_membership: {
+					required: true
+				},
+
+
+				/* Product Description */
+
+				brief_product_solution_idea_description: {
+					required: true
+				},
+
+				brief_product_solution_idea_description_attachment: {
+                    required: true,
+                    validatePdf: true,
+                    filesize: 2,
+                },
+
+				primary_objective_of_module_sub_system_product_solution_proposed: {
+					required: true
+				},
+
+				key_deliverables: {
+					required: true
+				},
+
+				type_of_solution_product: {
+					required: true
+				},
+
+				details_prior_experience: {
+					required: true
+				},
+
+				if_the_proposed_solution_product: {
+					required: true
+				},
+
+				is_product_tech_related_to_present_activities: {
+					required: true
+				},
+
+				is_it_new_concept_design_sol_product: {
+					required: true
+				},
+
+				are_there_any_alternate_competive_tech_product: {
+					required: true
+				},
+
+				provide_the_specification_doc_relavant_to_product: {
+					required: true,
+					validatePdf: true,
+					filesize: 2,
+				},
+
+				/* Project Plan */
+
+				provide_dev_plan_indicate_major_milestone: {
+					required: true
+				},
+
+				provide_dev_plan_indicate_major_milestone_attachment: {
+					required: true,
+					validatePdf: true,
+					filesize: 2,
+				},
+
+				manpower_support_requirements: {
+					required: true
+				},
+
+				infrastructure_support_requirements: {
+					required: true
+				},
+
+				infrastructure_support_requirements_attachment: {
+					required: true,
+					validatePdf: true,
+					filesize: 2,
+				},
+
+				details_of_existing_tools_testers_platform: {
+					required: true
+				},
+
+				details_of_existing_tools_testers_platform_attachment: {
+					required: true,
+					validatePdf: true,
+					filesize: 2,
+				},
+
+				/* close project plan */
+
+				/* funding */		
+
+				estimated_development_cost: {
+					required: true
+				},
+
+				estimated_development_cost_attachment: {
+					required: true,
+					validatePdf: true,
+					filesize: 2,
+				},
+
+				fund_expected: {
+					digits: true
+				},
+
+				details_of_funding: {
+					required: true
+				},
+
+				details_of_funding_attachment: {
+					required: true,
+					validatePdf: true,
+					filesize: 2,
+				},
+
+				details_self_funding: {
+					required: true
+				},
+
+				details_self_funding_attachment: {
+					required: true,
+					validatePdf: true,
+					filesize: 2,
+				},
+
+				any_regulatory_approval: {
+					lettersonly: true
+				},
+
+				/* close */
+
+				terms: "required"
+			},
+			messages: {
+
+			},
+
+			submitHandler: function(form) {
+
+				let _token = $('meta[name="csrf-token"]').attr('content');
+
+				let formData =  new FormData(form);
+
+                formData.append("_token", _token);
+
+                $("#sbmitbtn").attr('disabled', true).html('just a moment...');
+
+		        $.ajax({
+				            url: `/application-form-6g-user`,
+                            type: "POST",    
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function(response) {
+	                                if (response.status == true) {
+	                                    window.location.reload();
+	                                } else {
+	                                	alert('Something went wrong');
+	                                	$("#sbmitbtn").removeAttr('disabled').html('Submit');
+	                                }
+                            },
+                            error: function (jqXHR, exception) {
+                                $("#sbmitbtn").removeAttr('disabled').html('Submit');
+                                alert('Something went wrong!');
+                            }
+		       		  });
+		    }
+
+
+
+
+
+		});
+});

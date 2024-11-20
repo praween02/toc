@@ -1,0 +1,261 @@
+@extends('layouts.app')
+@section('title', ' - Dashboard')
+@section('content')
+<style>
+.card-body label{color:#fff}
+.spacer{line-height:28px}
+h6{color:#fff;padding-left:10px;font-size:14px;letter-spacing:1px}
+.card-body{padding-top:5px !important}
+.card-body label{color:#f7f7f7}
+.brder{border-radius:10px;background:#fff;padding:5px;box-shadow: 6px 11px 41px -28px #796eb1;-webkit-box-shadow: 6px 11px 41px -28px #796eb1;}
+.hghtchart,#container{height:300px}
+.card{box-shadow:0 0 10px #bebebe}
+
+</style>
+<div class="content-page">
+    <div class="content">
+        <!-- Start Content-->
+            <div class="container">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12 float-left"><h3>{{ __('Dashboard') }}</h3><br /></div>
+                        </div>
+                        
+                        <div class="row">
+                         <div class="col-md-6 col-xl-4">
+                            <div class="widget-rounded-circle card">
+                               <!-- <h6>Lab Status</h6> -->
+                                <div class="card-body brder">
+                                    <div id="container" class="hghtchart"></div>
+                                </div>
+                            </div>
+                            <!-- end widget-rounded-circle-->
+                         </div>
+                         <!-- end col-->
+                         <div class="col-md-6 col-xl-4">
+                            <div class="widget-rounded-circle card">
+                               <!-- <h6>Project Timeline</h6> -->
+                               <div class="card-body brder">
+                                  <div id="container2" class="hghtchart"></div>
+                               </div>
+                            </div>
+                            <!-- end widget-rounded-circle-->
+                         </div>
+                         <!-- end col-->
+                        <!-- end col-->
+                         <div class="col-md-6 col-xl-4">
+                            <div class="widget-rounded-circle card">
+                               <!-- <h6>Tickets</h6> -->
+                                <div class="card-body brder">
+                                  <div id="container3" class="hghtchart"></div>
+                                </div>
+                            </div>
+                            <!-- end widget-rounded-circle-->
+                         </div>
+                         <!-- end col-->
+
+                      </div>
+
+                    </div>
+                </div>
+            </div>
+        <!-- End Content-->
+    </div>
+</div>
+@endsection
+
+
+@push('scripts')
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script>
+    // Data retrieved from https://gs.statcounter.com/browser-market-share#monthly-202201-202201-bar
+
+Highcharts.setOptions({
+    chart: {
+        style: {
+            fontFamily: 'Poppins,sans-serif',
+            fontSize: '14px'
+        }
+    }
+   });
+
+// Create the chart
+Highcharts.chart('container', {
+    chart: {
+        type: 'bar',
+       // backgroundColor: null
+    },
+    title: {
+        align: 'left',
+        text: 'Lab Status'
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        title: {
+            text: 'Data'
+        }
+
+    },
+    legend: {
+        enabled: false
+    },
+
+    tooltip: {
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> of total<br/>'
+    },
+
+    series: [
+        {
+            name: 'Lab Status',
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Supplied',
+                    y: 63,
+                    drilldown: 'Supplied'
+                },
+                {
+                    name: 'Installation',
+                    y: 21,
+                    drilldown: 'Installation'
+                },
+                {
+                    name: 'UAT/Testing',
+                    y: 15,
+                    drilldown: 'UAT/Testing'
+                },
+                {
+                    name: 'Training Course',
+                    y: 10,
+                    drilldown: 'Training Course'
+                }
+            ]
+        }
+    ]
+});
+
+
+Highcharts.chart('container2', {
+    chart: {
+        type: 'pie'
+    },
+    title: {
+        text: 'Project Timeline'
+    },
+    tooltip: {
+        valueSuffix: '%'
+    },
+
+     plotOptions: {
+        series: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: [{
+                enabled: true,
+                distance: 20
+            }, {
+                enabled: true,
+                distance: -40,
+                format: '{point.percentage:.1f}%',
+                style: {
+                    fontSize: '1.2em',
+                    textOutline: 'none',
+                    opacity: 0.7
+                },
+                filter: {
+                    operator: '>',
+                    property: 'percentage',
+                    value: 10
+                }
+            }]
+        }
+    },
+    
+    series: [
+        {
+            name: 'Project Timeline',
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Ontime',
+                    y: 55.00
+                },
+                {
+                    name: 'Delayed',
+                    y: 45.00
+                }
+            ]
+        }
+    ]
+});
+
+
+
+
+// Create the chart
+Highcharts.chart('container3', {
+    chart: {
+        type: 'column',
+       // backgroundColor: null
+    },
+    title: {
+        align: 'left',
+        text: 'Tickets'
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        title: {
+            text: 'Data'
+        }
+    },
+    legend: {
+        enabled: false
+    },
+
+    tooltip: {
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> of total<br/>'
+    },
+
+    series: [
+        {
+            name: 'Tickets',
+            colorByPoint: true,
+            data: [
+                {
+                    name: 'Received',
+                    y: 63,
+                    drilldown: 'Received'
+                },
+                {
+                    name: 'Resolved',
+                    y: 21,
+                    drilldown: 'Resolved'
+                },
+                {
+                    name: 'Pending',
+                    y: 15,
+                    drilldown: 'Pending'
+                },
+                {
+                    name: 'In Process',
+                    y: 10,
+                    drilldown: 'In Process'
+                }
+            ]
+        }
+    ]
+});
+
+
+</script>
+@endpush

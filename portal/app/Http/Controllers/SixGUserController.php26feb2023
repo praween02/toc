@@ -1,0 +1,136 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\PocBsnl;
+use App\DataTables\PocBsnlsDataTable;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
+use DB;
+
+class SixGUserController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(PocBsnlsDataTable $dataTable)
+    {
+        //
+        //return $dataTable->render('pages.poc_bsnl.index');
+        $arrContextOptions  = array(
+                                        "ssl" => array(
+                                            "verify_peer"=>false,
+                                            "verify_peer_name"=>false,
+                                        ),
+                                  ); 
+        $userId = Auth::user()->id;
+        //$users_res = json_decode(file_get_contents('https://bharat5glabs.gov.in/api/sixGFormId/'.$userId, false, stream_context_create($arrContextOptions)));
+        $users_res = DB::select('SELECT * FROM 6g_application_form WHERE user_id = '.$userId);
+        //print_r($users_res); die;
+        $users = $users_res;
+        //$users = $users_res->data;
+        //$path = $users_res->url;
+        $path = 'https://www.bharat5glabs.gov.in/uploads/doc/';
+
+        
+        return view('pages.six_g_user.index', compact('users', 'path'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+
+        return view('pages.six_g_user.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate($this->validation_array());
+
+        $post_data = $this->post_data($request);
+
+        $uploads_fields = ['mse_certificate', 'solution_mse_certificate', 'signature', 'cert_incorporation', 'cert_self_declaration', 'cert_self_declaration_lab', 'cert_draft', 'cert_ownership'];
+
+        foreach ($uploads_fields as $key => $file_name)
+            {   
+                if ($request->hasFile($file_name)) {
+                    $file = $request->file($file_name);
+                    $client_original_file_name = '5GLab_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('public/poc_bsnl', $client_original_file_name);
+                    $post_data[$file_name] = $client_original_file_name;
+                }
+            }
+
+        try 
+            {
+                PocBsnl::create($post_data);
+            } 
+       catch (\Exception $e) {
+            $flag = 'error';
+            $msg = $e->getMessage();
+        }
+        
+        if (isset($flag)) 
+            return redirect()->route('poc_bsnl')->with('error', $msg)->withInput($request->input());
+        else
+            return redirect()->route('poc_bsnl')->with('message', 'Submitted successfully');
+    }
+    
+    
+    private function arrContextOptions() {
+        return  array(
+            "ssl" => array(
+                "verify_peer"=>false,
+                "verify_peer_name"=>false,
+            ),
+        );  
+    }
+ 
+        /**
+     * Display the specified resource.
+     */
+    public function show(Request $request)
+    {
+        //
+        /*$enc_application_id = $request->react_id;
+        try 
+            {
+                $application_id = Crypt::decrypt($enc_application_id);
+                $response = PocBsnl::whereId($application_id)->first();
+                $status = "success";
+            }
+        catch (\Exception $e) 
+            {
+                $status = "failure";
+                $response = "something went wrong. try again!";
+            }
+        */
+        
+        try {
+                 $users_res = DB::select('SELECT * FROM 6g_application_form WHERE id = '.$request->react_id);
+                // $users_res = json_decode(file_get_contents('https://bharat5glabs.gov.in/api/sixGForm/' . $request->react_id, false, stream_context_create($this->arrContextOptions())));
+        
+                // $response = $users_res->data[0];
+                // $path = $users_res->url;
+                $response = $users_res;
+                $path = 'https://www.bharat5glabs.gov.in/uploads/doc/';
+                $status = "success";
+        }
+        catch (\Exception $e) 
+            {
+                $status = "failure";
+                $response = "something went wrong. try again!";
+                $path = "";
+            }
+        
+        return response()->json(compact('response', 'status', 'path'));
+    }
+
+}

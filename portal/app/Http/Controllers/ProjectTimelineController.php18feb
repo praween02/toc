@@ -1,0 +1,500 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\{ProjectTimeline,Equipment,VendorInstitute,Institute,Zone};
+use Illuminate\Http\Request;
+
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+
+class ProjectTimelineController extends Controller
+{
+
+     /**
+     * Display all listing of the project timelines for admin end
+     */
+
+    public function projects_timeline(Request $request) {
+
+        $equipments = Equipment::select(['id', 'equipment'])->orderBy('equipment', 'ASC')->get();
+        $zones = Zone::select(['id', 'zone'])->orderBy('zone', 'ASC')->get();
+
+        $zone_id = $request->zone_id ?? '';
+        $inst_id = $request->inst_id ?? '';
+        $institutes = [];
+
+        if ($zone_id) {
+            $institutes = DB::SELECT("SELECT `id`, `institute` FROM `" . DB::getTablePrefix() . "institutes` WHERE `id` IN (SELECT `institute_id` FROM `" . DB::getTablePrefix() . "vendor_zone_institutes` WHERE `vendor_zone_id` IN (SELECT `id` FROM `" . DB::getTablePrefix() . "vendor_zones` WHERE `zone_id` = $zone_id))");
+        }
+
+        $response = [];
+        if ($inst_id) {
+            $project_timeline = ProjectTimeline::where('institute_id', $inst_id)->get();
+            foreach ($project_timeline as $p_timeline) {
+                $response[$p_timeline->equipment_id] = $p_timeline->toArray();
+            }
+        }
+        
+        return view('pages.project_timeline.list', compact('equipments', 'institutes', 'response', 'zones'));
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(Request $request)
+    {
+        //
+        //abort_if((! in_array('vendor', get_roles())), 403, __('app.permission_denied'));
+
+        $institute_id = $request->get('inst_id');
+        $response = [];
+         try 
+            {
+                $inst_id = Crypt::decrypt($institute_id);
+                $equipments_data = ProjectTimeline::where('institute_id', $inst_id)->get()->toArray();
+                foreach($equipments_data as $data) {
+                    $response[$data['equipment_id']] = $data;
+                }
+            }
+        catch (\Exception $e) 
+            {
+
+            }
+
+        $equipments = Equipment::select(['id', 'equipment'])->orderBy('equipment', 'ASC')->get();
+        $institutes = VendorInstitute::
+                        select(['institutes.id', 'institutes.institute'])
+                        ->leftJoin('institutes', 'vendor_zone_institutes.institute_id', '=', 'institutes.id')
+                        ->leftJoin('vendor_zones', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.id')
+                        ->leftJoin('zones', 'vendor_zones.zone_id', '=', 'zones.id')
+                        ->where('vendor_zones.vendor_id', \Auth::user()->id)
+                        ->orderBy('institutes.institute', 'ASC')
+                        ->get();
+
+        return view('pages.project_timeline.create', compact('equipments', 'institutes', 'response'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
+        $request->validate([
+                                'institute_id' => 'required',
+                          ]);
+
+        $post_data = $request->post; // post all datas //
+
+        foreach ($post_data as $encryptedId => $fields) 
+            {
+                try 
+                    {
+
+                        $inst_id = Crypt::decrypt($request->institute_id);
+                        $equipment_id = Crypt::decrypt($encryptedId);
+
+                        if ($fields['delivery_date']):
+
+                            $record = ProjectTimeline::where(['institute_id' => $inst_id, 'equipment_id' => $equipment_id])->first();
+                            $delivery_transport_invoice_file = '';
+
+                            if ($request->hasFile("post.$encryptedId.delivery_transport_invoice")) {
+
+                                $file = $request->file("post.$encryptedId.delivery_transport_invoice");
+                                $delivery_transport_invoice_file = '5GLab_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                                $file->storeAs('public/files', $delivery_transport_invoice_file);
+
+                            }
+
+                            if ($record === null)
+                                 {
+                                    ProjectTimeline::create([
+                                                                'institute_id' => $inst_id,
+                                                                'equipment_id' => $equipment_id,
+                                                                'vendor_equipment_delivery_date' => $fields['delivery_date'],
+                                                                'vendor_equipment_install_start_date' => $fields['installation_start_date'],
+                                                                'vendor_equipment_install_end_date' => $fields['installation_end_date'],
+                                                                'vendor_equipment_commision_start_date' => $fields['commission_start_date'],
+                                                                'vendor_equipment_commision_end_date' => $fields['commission_end_date'],
+                                                                'delivery_transport_invoice' => $delivery_transport_invoice_file
+                                                            ]);
+                                 }
+                            else 
+                                {
+                                    $arr = [];
+
+                                    if (empty($record->vendor_equipment_delivery_date))
+                                    $arr['vendor_equipment_delivery_date'] =  $fields['delivery_date'];
+
+                                    if (empty($record->vendor_equipment_install_start_date))
+                                        $arr['vendor_equipment_install_start_date'] =  $fields['installation_start_date'];
+
+                                    if (empty($record->vendor_equipment_install_end_date))
+                                        $arr['vendor_equipment_install_end_date'] =  $fields['installation_end_date'];
+
+                                    if (empty($record->vendor_equipment_commision_start_date))
+                                        $arr['vendor_equipment_commision_start_date'] =  $fields['commission_start_date'];
+
+                                    if (empty($record->vendor_equipment_commision_end_date))
+                                        $arr['vendor_equipment_commision_end_date'] =  $fields['commission_end_date'];
+
+                                    if ($delivery_transport_invoice_file)
+                                    $arr['delivery_transport_invoice'] = $delivery_transport_invoice_file;
+                                
+                                    if( ! empty($arr))
+                                    ProjectTimeline::where(['institute_id' => $inst_id, 'equipment_id' => $equipment_id])->update($arr);
+
+                                }
+                        endif;
+                    }
+
+                catch (DecryptException $e) 
+                    {
+                        abort_if(1, 403);
+                    }
+            }
+
+        $redirect_url = route('project_timeline') . '?inst_id=' . $request->inst_id;
+
+        return redirect($redirect_url)->with($key ?? 'message', $msg ?? 'Updated Successfully');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(ProjectTimeline $projectTimeline)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(ProjectTimeline $projectTimeline)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, ProjectTimeline $projectTimeline)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(ProjectTimeline $projectTimeline)
+    {
+        //
+    }
+
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function inst_create(Request $request)
+    {
+        //
+        //abort_if((! in_array('institute', get_roles())), 403, __('app.permission_denied'));
+
+        // $response = [];
+        // $institute_id = DB::table('user_institutes')->select('institute_id')->where('user_id', current_user_id())->first()->institute_id ?? 0;
+        // $equipments_data = ProjectTimeline::where('institute_id', $institute_id)->get()->toArray();
+        // foreach($equipments_data as $data) {
+        //     $response[$data['equipment_id']] = $data;
+        // }
+
+        $equipments = Equipment::select(['id', 'equipment'])->orderBy('equipment', 'ASC')->get();
+
+        return view('pages.project_timeline.inst_create', compact('equipments'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function inst_store(Request $request)
+    {
+        //
+        abort_if((! in_array('institute', get_roles())), 403, __('app.permission_denied'));
+
+        $delivered_date = $request->delivered_date;
+        $installed_date = $request->installed_date;
+        $commissioned_date = $request->commissioned_date;
+
+        foreach ($delivered_date as $encryptedId => $val) 
+            {
+                try 
+                    {
+                            $inst_id = DB::table('user_institutes')->select('institute_id')->where('user_id', current_user_id())->first()->institute_id;
+                            $equipment_id = Crypt::decrypt($encryptedId);
+                            if (isset($delivered_date[$encryptedId])):
+
+                                $is_record_exist = ProjectTimeline::where(['institute_id' => $inst_id, 'equipment_id' => $equipment_id])->first();
+                                
+                                if ($is_record_exist !== null)
+                                    {
+                                        ProjectTimeline::where([
+                                                                    'institute_id' => $inst_id,
+                                                                    'equipment_id' => $equipment_id
+                                                               ])
+                                                        ->update([
+                                                                    'institute_equipment_delivered_date' => $delivered_date[$encryptedId],
+                                                                    'institute_equipment_installed_date' => $installed_date[$encryptedId],
+                                                                    'institute_equipment_commisioned_date' => $commissioned_date[$encryptedId]
+                                                                ]);
+                                    }
+                              
+                            endif;
+                    }
+                catch (DecryptException $e) 
+                    {
+                        $key = 'error';
+                        $msg = 'Something Went Wrong';
+                    }
+            }
+
+        return redirect(route('inst_project_timeline'))->with($key ?? 'message', $msg ?? 'Updated Successfully');
+    }
+
+
+    public function get_prefilled_equipment_data(Request $request) {
+        $type = $request->type;
+        $inst_id = $request->inst_id;
+        $current_user_id = current_user_id();
+        $status = "success";
+        try {
+                $inst_id = Crypt::decrypt($inst_id);
+
+                // get results //
+
+     //           echo $type; die;
+
+                switch($type) {
+                    case 'Delivery_Date':
+                                        $field = "p.equipment_delivery_date";
+                                        break;
+
+                    case 'Installation_Date':
+                                        $field = "p.equipment_install_date";
+                                        break;
+
+                    case 'Commission_Date':
+                                        $field = "p.equipment_commision_date";
+                                        break;
+
+                    case 'Dispatch_Invoice':    
+                                        $field = "p.dispatch_invoice_file";
+                                        break;
+                }
+
+                $results = DB::SELECT("SELECT
+                                            GROUP_CONCAT(e.equipment) AS equipments,
+                                            $field AS field
+                                        FROM
+                                            `" . DB::getTablePrefix() . "project_timelines` AS p
+                                        LEFT JOIN `" . DB::getTablePrefix() . "equipments` AS e
+                                        ON
+                                            e.id = p.equipment_id
+                                        WHERE
+                                            $field IS NOT NULL
+                                        GROUP BY
+                                            $field");                       
+        }
+        catch (Exception $e) {
+            $status = "error";
+        }
+
+        return response()->json(['status' => $status, 'results' => $results]);
+
+    }
+
+
+    public function checkEquipmentsProjectTimeline(Request $request) {
+
+        $institute_id = $request->institute_id;
+        $equipments = $request->equipments;
+        $equipments_arr = [];
+        try 
+            {
+                $inst_id = Crypt::decrypt($institute_id);
+                foreach ($equipments as $equipment) {
+                    $equipments_arr[] = Crypt::decrypt($equipment);
+                }
+
+                $result = DB::SELECT("SELECT
+                                        COALESCE(
+                                                SUM(
+                                                    CASE WHEN `equipment_delivery_date` IS NOT NULL THEN 1
+                                                END
+                                            ),
+                                            0
+                                        ) AS equipment_delivery_count,
+                                        COALESCE(
+                                                SUM(
+                                                    CASE WHEN `dispatch_invoice_file` IS NOT NULL THEN 1
+                                                END
+                                            ),
+                                            0
+                                            ) AS dispatch_count
+                                    FROM
+                                        `" . DB::getTablePrefix() . "project_timelines`
+                                    WHERE
+                                        `institute_id` = $inst_id AND `equipment_id` IN( ". implode(", ", $equipments_arr). ")")[0];
+
+                return response()->json(compact('result'));
+            }
+        catch(DecryptException $e) {
+                $key = 'error';
+                $msg = 'Something Went Wrong';
+        }
+
+    }
+    public function equipment_data(Request $request) 
+        {
+            $is_schedulte_timelines = $request->is_schedulte_timelines;
+            $is_dispatched_timelines = $request->is_dispatched_timelines;
+
+            if ($is_schedulte_timelines) 
+                {
+                    $dispatch_date = $request->dispatch_date;
+                    $delivery_date = $request->delivery_date;
+                    $installation_date = $request->installation_date;
+                    $commission_date = $request->commission_date;
+
+                    DB::beginTransaction();
+
+                    try 
+                        {
+                            $status = 'success';
+                            $institute_id = Crypt::decrypt($request->institute_id);
+                            foreach(explode(',', $request->equipments) as $equipment) 
+                                {
+                                    $equipment_id = Crypt::decrypt($equipment);
+                                    ProjectTimeline::create(['equipment_id' => $equipment_id, 'institute_id' => $institute_id, 'equipment_dispatch_date' => $dispatch_date, 'equipment_delivery_date' => $delivery_date , 'equipment_install_date' => $installation_date , 'equipment_commision_date' => $commission_date]);
+                                }
+                            
+                            DB::commit();
+                        }
+
+                    catch (\Exception $e) {
+                        DB::rollback();
+                        $status = 'error';
+                        $msg = $e->getMessage();
+                    }
+                }
+
+            if ($is_dispatched_timelines) 
+                {
+                    $actual_dispatch_date = $request->actual_dispatch_date;
+                    $client_original_file_name = '';
+                    if ($request->hasFile('dispatch_pdf')) {
+                        $file = $request->file('dispatch_pdf');
+                        $client_original_file_name = '5GLab_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                        $file->storeAs('public/uploads/', $client_original_file_name);
+                    }
+
+                    DB::beginTransaction();
+
+                    try 
+                        {
+                            $status = 'success';
+                            $institute_id = Crypt::decrypt($request->institute_id);
+                            foreach(explode(',', $request->equipments) as $equipment) 
+                                {
+                                    $equipment_id = Crypt::decrypt($equipment);
+                                    ProjectTimeline::where(['equipment_id' => $equipment_id, 'institute_id' => $institute_id])->update(['dispatch_invoice_file' => $client_original_file_name, 'equipment_actual_dispatch_date' => $actual_dispatch_date]);
+                                }
+                            
+                            DB::commit();
+                        }
+
+                    catch (\Exception $e) {
+                        DB::rollback();
+                        $status = 'error';
+                        $msg = $e->getMessage();
+                    }
+                }
+
+            return response()->json(compact('status'));
+        }
+
+
+    public function checkInstEquipmentsProjectTimeline(Request $request) 
+        {
+           $inst_id = 1;//DB::table('user_institutes')->select('institute_id')->where('user_id', current_user_id())->first()->institute_id ?? 0;
+            $equipments = $request->equipments;
+            $equipments_arr = [];
+            try 
+                {
+                    foreach ($equipments as $equipment) {
+                        $equipments_arr[] = Crypt::decrypt($equipment);
+                    }
+
+                    $result = DB::SELECT("SELECT
+                                            COALESCE(
+                                                    SUM(
+                                                        CASE WHEN (`equipment_delivered_date` IS NULL AND `equipment_actual_dispatch_date` IS NOT NULL) THEN 1
+                                                    END
+                                                ),
+                                                0
+                                            ) AS actual_dispatch_count
+                                        FROM
+                                            `" . DB::getTablePrefix() . "project_timelines`
+                                        WHERE
+                                            `institute_id` = $inst_id AND `equipment_id` IN( ". implode(", ", $equipments_arr). ")")[0];
+
+                    return response()->json(compact('result'));
+                }
+            catch(DecryptException $e) {
+                    $key = 'error';
+                    $msg = 'Something Went Wrong';
+            }
+        }
+
+    public function inst_equipment_data(Request $request) 
+        {
+            $institute_id = get_vendor_inst_id();
+
+            $delivered_date = $request->delivered_date;
+            $installed_date = $request->installed_date;
+            $commissioned_date = $request->commissioned_date;
+
+            DB::beginTransaction();
+
+            try 
+                {
+                    $status = 'success';
+                    foreach(explode(',', $request->equipments) as $equipment) 
+                        {
+                            $equipment_id = Crypt::decrypt($equipment);
+                            ProjectTimeline::where(['equipment_id' => $equipment_id, 'institute_id' => $institute_id])->update(['equipment_delivered_date' => $delivered_date, 'equipment_installed_date' => $installed_date , 'equipment_commisioned_date' => $commissioned_date]);
+                        }
+                    
+                    DB::commit();
+                }
+
+            catch (\Exception $e) {
+                DB::rollback();
+                $status = 'error';
+                $msg = $e->getMessage();
+            }
+
+            return response()->json(compact('status'));
+        }
+}
