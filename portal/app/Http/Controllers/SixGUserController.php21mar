@@ -1,0 +1,315 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\{SixGUser,SixGUserCollaborator};
+use App\DataTables\SixGApplicationsDataTable;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Auth;
+use DB;
+use Session;
+use Log;
+use Illuminate\Http\JsonResponse;
+
+class SixGUserController extends Controller
+{
+
+    /**
+     * Display a states of the country.
+     */
+
+    public function states($country_id = '') {
+
+        $states = DB::table('states')->select(['id', 'name'])->where('country_id', $country_id)->get();
+        return response()->json(compact('states'));
+
+    }
+
+    public function cities($state_id = '') {
+
+        $cities = DB::table('cities')->select(['id', 'name'])->where('state_id', $state_id)->get();
+        return response()->json(compact('cities'));
+
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    
+    public function index(SixGApplicationsDataTable $dataTable)
+    {
+        abort_if((count(array_intersect(['six-g-user', 'super_admin'], get_roles())) ? 0 : 1), 403, __('app.permission_denied'));
+
+        return $dataTable->render('pages.six_g_user.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        abort_if((count(array_intersect(['six-g-user', 'super_admin'], get_roles())) ? 0 : 1), 403, __('app.permission_denied'));
+        
+        $countries =  DB::table('countries')->select(['id', 'name'])->orderBy('name', 'ASC')->get();
+        return view('pages.six_g_user.create', compact('countries'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): JsonResponse
+    {
+        abort_if((count(array_intersect(['six-g-user', 'super_admin'], get_roles())) ? 0 : 1), 403, __('app.permission_denied'));
+
+        \Log::info("SIXG Entry - " . date("Y-m-d H:i:s"));
+
+        $request->validate($this->validation_array());
+
+        $post_data = $this->post_data($request);
+
+        $post_data['user_id'] = current_user_id();
+
+        $attachment_arr = ['authorization_letter', 'bio_data_professional_credentials', 'brief_product_solution_idea_description_attachment', 'provide_the_specification_doc_relavant_to_product', 'provide_dev_plan_indicate_major_milestone_attachment', 'infrastructure_support_requirements_attachment', 'details_of_existing_tools_testers_platform_attachment', 'estimated_development_cost_attachment', 'details_of_funding_attachment', 'details_self_funding_attachment']; //collaborator_biodata collaborator_company_turnover_attachment
+
+        foreach ($attachment_arr as $key => $file_name)
+            {   
+                if ($request->hasFile($file_name)) {
+                    $file = $request->file($file_name);
+                    $client_original_file_name = '5GLab_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                    $file->storeAs('public/uploads', $client_original_file_name);
+                    $post_data[$file_name] = $client_original_file_name;
+                }
+            }
+	DB::beginTransaction();
+
+        try 
+            {
+                $app_id = SixGUser::create($post_data)->id;
+
+                /* collaborator */
+
+                $collaborator_name_arr = $request->collaborator_name;
+
+                if (count($collaborator_name_arr)):
+                    $col_arr = [];
+                    $col_array = [];
+
+                    if($request->collaborator_biodata):
+                        foreach ($request->collaborator_biodata as $key => $file)
+                            {   
+                                $client_original_file_name = '5GLab_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                                $file->storeAs('public/uploads', $client_original_file_name);
+                                $col_arr[$key]['collaborator_biodata'] = $client_original_file_name;
+                            }
+                    endif;
+
+                    if($request->collaborator_company_turnover_attachment):
+                        foreach ($request->collaborator_company_turnover_attachment as $key => $file)
+                            {   
+                                $client_original_file_name = '5GLab_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                                $file->storeAs('public/uploads', $client_original_file_name);
+                                $col_arr[$key]['collaborator_company_turnover_attachment'] = $client_original_file_name;
+                            }
+                    endif;
+
+                    if (count($collaborator_name_arr)):
+                        foreach($collaborator_name_arr as $key => $data):
+
+                            $col_arr[$key]['application_id'] = $app_id;
+                            $col_arr[$key]['collaborator_name'] = $request->collaborator_name[$key] ?? null;
+                            $col_arr[$key]['collaborator_designation'] = $request->collaborator_designation[$key] ?? null;
+                            $col_arr[$key]['collaborator_contact_no'] = $request->collaborator_contact_no[$key] ?? null;
+                            $col_arr[$key]['collaborator_email_id'] = $request->collaborator_email_id[$key] ?? null;
+                            $col_arr[$key]['collaborator_industry_cateogory'] = $request->collaborator_industry_cateogory[$key] ?? null;
+                            $col_arr[$key]['collaborator_address'] = $request->collaborator_address[$key] ?? null;
+                            $col_arr[$key]['collaborator_area_of_work'] = $request->collaborator_area_of_work[$key] ?? null;
+                            $col_arr[$key]['collaborator_size_company'] = $request->collaborator_size_company[$key] ?? null;
+                            $col_arr[$key]['collaborator_location_of_head_office_branch'] = $request->collaborator_location_of_head_office_branch[$key] ?? null;
+                            $col_arr[$key]['collaborator_company_turnover'] = $request->collaborator_company_turnover[$key] ?? null;
+
+                            if ( ! isset($col_arr[$key]['collaborator_biodata']))
+                            $col_arr[$key]['collaborator_biodata'] = '';
+
+                            if ( ! isset($col_arr[$key]['collaborator_company_turnover_attachment']))
+                            $col_arr[$key]['collaborator_company_turnover_attachment'] = '';
+
+                        endforeach;
+                            SixGUserCollaborator::insert($col_arr);         
+                        
+                    endif;
+                endif;
+
+		DB::commit();
+                
+                /* end collaborator */
+
+                $status = 'success';
+                $msg = "saved";
+
+                Session::flash('message', 'Submitted successfully'); 
+            } 
+        catch (\Exception $e) {
+
+	    DB::rollback();
+
+            $status = 'error';
+            $msg = $e->getMessage();
+            \Log::info("SIXG USER ISSUE - " . $msg);
+        }
+
+        return response()->json(compact('status', 'msg'));
+    }
+
+ 
+        /**
+     * Display the specified resource.
+     */
+    public function show(Request $request, $enc_id = '')
+        {   
+            abort_if((count(array_intersect(['six-g-user', 'super_admin'], get_roles())) ? 0 : 1), 403, __('app.permission_denied'));
+
+            try {
+                     $application_id = Crypt::decryptString($enc_id);
+                     $record = SixGUser::whereId($application_id)->first();
+
+                } 
+            catch (DecryptException $e) {
+                    abort(404);
+            }
+            
+            return view('pages.six_g_user.show', compact('record'));
+        }
+
+    
+    /* Validation Array */
+
+    private function validation_array() 
+        {
+            return 
+                   [
+                        'organization_name',
+                        'nodal_contact_person',
+                        'designation',
+                        'authorization_letter',
+                        'bio_data_professional_credentials',
+                        'contact_no',
+                        'email_id',
+                        'country',
+                        'state',
+                        'city',
+                        'address',
+                        'pin_no',
+                        'applying_as',
+                        'collaborator_name',
+                        'collaborator_designation',
+                        'collaborator_contact_no',
+                        'collaborator_email_id',
+                        'collaborator_industry_cateogory',
+                        'collaborator_address',
+                        'collaborator_biodata',
+                        'collaborator_area_of_work',
+                        'collaborator_size_company',
+                        'collaborator_location_of_head_office_branch',
+                        'collaborator_company_turnover',
+                        'collaborator_company_turnover_attachment',
+                        'proposed_project_title',
+                        'proposed_product_area_category',
+                        'technology_area',
+                        'stage_of_product_based_on_minimum_technology_readiness_level',
+                        'collaboration_customers_clients',
+                        'list_of_ipr_awards_paper_published',
+                        'relevant_standards_standard_body_membership',
+                        'brief_product_solution_idea_description',
+                        'brief_product_solution_idea_description_attachment',
+                        'primary_objective_of_module_sub_system_product_solution_proposed',
+                        'key_deliverables',
+                        'type_of_solution_product',
+                        'details_prior_experience',
+                        'if_the_proposed_solution_product',
+                        'is_product_tech_related_to_present_activities',
+                        'is_it_new_concept_design_sol_product',
+                        'are_there_any_alternate_competive_tech_product',
+                        'provide_the_specification_doc_relavant_to_product',
+                        'provide_dev_plan_indicate_major_milestone',
+                        'provide_dev_plan_indicate_major_milestone_attachment',
+                        'manpower_support_requirements',
+                        'infrastructure_support_requirements',
+                        'infrastructure_support_requirements_attachment',
+                        'details_of_existing_tools_testers_platform',
+                        'details_of_existing_tools_testers_platform_attachment',
+                        'any_additional_dev_tools_software_requirements',
+                        'estimated_development_cost',
+                        'estimated_development_cost_attachment',
+                        'fund_expected',
+                        'details_of_funding',
+                        'details_of_funding_attachment',
+                        'details_self_funding',
+                        'details_self_funding_attachment',
+                        'any_regulatory_approval',
+                        'any_other_remarks'
+                    ];
+        }
+
+
+
+    /* POST Fields */
+
+    private function post_data(Request $request) 
+        {
+            return 
+                   [
+                        'organization_name' => $request->organization_name,
+                        'nodal_contact_person' => $request->nodal_contact_person,
+                        'designation' => $request->designation,
+                        'contact_no' => $request->contact_no,
+                        'email_id' => $request->email_id,
+                        'country' => $request->country,
+                        'state' => $request->state,
+                        'city' => $request->city,
+                        'address' => $request->address,
+                        'pin_no' => $request->pin_no,
+                        'applying_as' => $request->applying_as,
+                        'collaborator_name' => $request->collaborator_name,
+                        'collaborator_designation' => $request->collaborator_designation,
+                        'collaborator_contact_no' => $request->collaborator_contact_no,
+                        'collaborator_email_id' => $request->collaborator_email_id,
+                        'collaborator_industry_cateogory' => $request->collaborator_industry_cateogory,
+                        'collaborator_address' => $request->collaborator_address,
+                        'collaborator_area_of_work' => $request->collaborator_area_of_work,
+                        'collaborator_size_company' => $request->collaborator_size_company,
+                        'collaborator_location_of_head_office_branch' => $request->collaborator_location_of_head_office_branch,
+                        'collaborator_company_turnover' => $request->collaborator_company_turnover,
+                        'proposed_project_title' => $request->proposed_project_title,
+                        'proposed_product_area_category' => $request->proposed_product_area_category,
+                        'technology_area' => $request->technology_area,
+                        'stage_of_product_based_on_minimum_technology_readiness_level' => $request->stage_of_product_based_on_minimum_technology_readiness_level,
+                        'collaboration_customers_clients' => $request->collaboration_customers_clients,
+                        'list_of_ipr_awards_paper_published' => $request->list_of_ipr_awards_paper_published,
+                        'relevant_standards_standard_body_membership' => $request->relevant_standards_standard_body_membership,
+                        'brief_product_solution_idea_description' => $request->brief_product_solution_idea_description,
+                        'primary_objective_of_module_sub_system_product_solution_proposed' => $request->primary_objective_of_module_sub_system_product_solution_proposed,
+                        'key_deliverables' => $request->key_deliverables,
+                        'type_of_solution_product' => $request->type_of_solution_product,
+                        'details_prior_experience' => $request->details_prior_experience,
+                        'if_the_proposed_solution_product' => $request->if_the_proposed_solution_product,
+                        'is_product_tech_related_to_present_activities' => $request->is_product_tech_related_to_present_activities,
+                        'is_it_new_concept_design_sol_product' => $request->is_it_new_concept_design_sol_product,
+                        'are_there_any_alternate_competive_tech_product' => $request->are_there_any_alternate_competive_tech_product,
+                        'provide_dev_plan_indicate_major_milestone' => $request->provide_dev_plan_indicate_major_milestone,
+                        'manpower_support_requirements' => $request->manpower_support_requirements,
+                        'infrastructure_support_requirements' => $request->infrastructure_support_requirements,
+                        'details_of_existing_tools_testers_platform' => $request->details_of_existing_tools_testers_platform,
+                        'any_additional_dev_tools_software_requirements' => $request->any_additional_dev_tools_software_requirements,
+                        'estimated_development_cost' => $request->estimated_development_cost,
+                        'fund_expected' => $request->fund_expected,
+                        'details_of_funding' => $request->details_of_funding,
+                        'details_self_funding' => $request->details_self_funding,
+                        'any_regulatory_approval' => $request->any_regulatory_approval,
+                        'any_other_remarks' => $request->any_other_remarks,
+                        'created_at' => $request->created_at,
+                    ];
+        }
+
+}

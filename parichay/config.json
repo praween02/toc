@@ -1,0 +1,11 @@
+{
+"ClientServicePort":"8083",
+"ClientServiceHost":"0.0.0.0",
+"ParichayAPIBaseURL":"https://parichay.nic.in:8081/",
+"ServiceId":"Bharat-5G",
+"AuthKey":"UHYi8fnHFust5MwshJXwLpM6xxub8cEd",
+"AESIV":"F762FdEg0E6EE7h3",
+"LogLevel":"DEBUG",
+"Logging": "1",
+"RestAuthId":"C5NZ2jSI9d"
+}

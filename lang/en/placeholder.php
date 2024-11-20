@@ -1,0 +1,37 @@
+<?php
+
+return [
+	    'utr_no' => 'Unique Transaction Reference',
+            'transaction_date' => 'Transaction Date',
+            'amount' => 'Amount',
+            'institute' => 'Institute',
+            'name' => 'John Doe',
+            'email' => 'email@example.com',
+            'password' => '●●●●●●●●',
+            'address1' => 'Address',
+            'address2' => 'Address',
+            'mobile' => 'Mobile',
+            'display_name' => 'Display Name',
+            'institutes' => 'Institutes',
+            'address' => 'Address',
+            'contact_person' => 'Contact Person',
+            'contact_number' => 'Contact Number',
+            'status' => 'Status',
+            'first_name' => 'First Name',
+            'last_name' => 'Last Name',
+            'user_name' => 'User Name',
+            'phone_no' => 'Phone Number',
+            'user_type' => 'User Type',
+            'gender' => 'Gender',
+            'company_name' => 'Company name',
+            'slug' => 'Slug',
+            'equipment' => 'Equipment',
+            'role_name' => 'Role Name',
+            'date' => 'Date',
+            'course' => 'Course',
+            'comment' => 'Comment',
+            'description' => 'Description',
+            'subject' => 'Subject',
+            'specification' => 'Specification'
+       ];
+

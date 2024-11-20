@@ -1,0 +1,146 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\{Ticket,Equipment};
+use Illuminate\Http\Request;
+use App\DataTables\TicketsDataTable;
+use Illuminate\Validation\Rule;
+
+use App\Enums\{TicketStatus};
+use Illuminate\Support\Facades\DB;
+
+class TicketController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(TicketsDataTable $dataTable)
+    {
+        //
+        //abort_if(permission('course.list'), 403, __('app.permission_denied'));
+        return $dataTable->render('pages.ticket.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+        $institutes = $this->vendorAssignedInstitutes(current_user_id());
+        return view('pages.ticket.create', compact('institutes'));
+    }
+
+    /**
+     * Return the vendor assigned institutes.
+     */
+
+    private function vendorAssignedInstitutes($current_user_id = "") {
+        return DB::SELECT("SELECT `id`, `institute` FROM `" . DB::getTablePrefix() . "institutes` WHERE `id` IN (SELECT `institute_id` FROM `" . DB::getTablePrefix() . "vendor_zone_institutes` WHERE `vendor_zone_id` IN (SELECT `id` FROM `" . DB::getTablePrefix() . "vendor_zones` WHERE `vendor_id` = $current_user_id))");
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //abort_if(permission('ticket.create'), 403, __('app.permission_denied'));
+
+        $arr =  [
+                    'subject' => [Rule::enum(TicketStatus::class)],
+                    'description' => 'required|max:1024'
+                ];
+
+        if ($request->subject == 'equipment_related')
+        $arr['institute'] = 'required'; 
+
+        $request->validate($arr);
+
+        $ticket_no = rand(111111111111, 999999999999);
+
+        $post_arr = ['ticket_no' => $ticket_no, 'subject' => $request->subject, 'description' => $request->description, 'user_id' => current_user_id(), 'created_at' => date("Y-m-d H:i:s")];
+
+        if ($request->subject == 'equipment_related')
+        $post_arr['institute_id'] = $request->institute;
+
+        try {
+            Ticket::create($post_arr);
+        } catch (\Exception $e) {
+            $key = 'error';
+            $msg = 'Something Went Wrong';
+
+            echo $e->getMessage(); die;
+        }
+        return redirect()->route('tickets.index')->with($key ?? 'message', $msg ?? 'Created Successfully');
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Ticket $ticket)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Ticket $ticket)
+    {
+        //
+        $institutes = $this->vendorAssignedInstitutes(current_user_id());
+        return view('pages.ticket.edit', compact('institutes', 'ticket'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Ticket $ticket)
+    {
+        //
+         $arr =  [
+                    'subject' => [Rule::enum(TicketStatus::class)],
+                    'description' => 'required|max:1024'
+                 ];
+
+        if ($request->subject == 'equipment_related')
+        $arr['institute'] = 'required'; 
+
+        $request->validate($arr);
+
+        $post_arr = ['subject' => $request->subject, 'description' => $request->description, 'status' => $request->status, 'updated_at' => date("Y-m-d H:i:s")];
+
+        $post_arr['institute_id'] = null;
+
+        if ($request->subject == 'equipment_related')
+        $post_arr['institute_id'] = $request->institute;
+
+        if ($request->status == 'closed'):
+            $post_arr['closed_date'] = date('Y-m-d H:i:s');
+            $post_arr['closed_by'] = current_user_id();
+        else:
+            $post_arr['closed_date'] = null;
+            $post_arr['closed_by'] = null;
+        endif;
+
+        try {
+            $ticket->update($post_arr);
+        } catch (\Exception $e) {
+            $key = 'error';
+            $msg = 'Something Went Wrong';
+
+            echo $e->getMessage(); die;
+        }
+        return redirect()->route('tickets.index')->with($key ?? 'message', $msg ?? 'Updated Successfully');
+
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Ticket $ticket)
+    {
+        //
+    }
+}
