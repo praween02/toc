@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{DashboardController,InstituteController,VendorController,UserController,RoleController,InstituteUserController,EquipmentSupplierController,VendorInstituteController,EquipmentController,CourseController,PocBsnlController,ProjectTimelineController,TicketController,AskExpertDetailController,EquipmentSpecificationController,PocBsnlUserController,ExpertUserControllerr,SixGUserController,ForgotController,TelecomController,TeamController,PaymentController,ParichayController,WorkshopController};
+use App\Http\Controllers\{DashboardController, InstituteController, VendorController, UserController, RoleController, InstituteUserController, EquipmentSupplierController, VendorInstituteController, EquipmentController, CourseController, PocBsnlController, ProjectTimelineController, TicketController, AskExpertDetailController, EquipmentSpecificationController, PocBsnlUserController, ExpertUserControllerr, SixGUserController, ForgotController, TelecomController, TeamController, PaymentController, ParichayController, WorkshopController,SystemManualController};
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,11 +14,11 @@ use App\Http\Controllers\{DashboardController,InstituteController,VendorControll
 */
 
 //Route::get('/', function () {
-    //echo '<center>Bharat 5G Labs</center>';
-  //  return redirect()->route('login');
+//echo '<center>Bharat 5G Labs</center>';
+//  return redirect()->route('login');
 //});
 
-Route::get('/uu/{id}', function($id) {
+Route::get('/uu/{id}', function ($id) {
     Auth::loginUsingId($id);
     return redirect()->route('dashboard');
 });
@@ -58,24 +58,24 @@ Route::middleware([
 
 
     Route::get('/experts/status/{id}', [SixGUserController::class, 'experts_status'])->name('experts.status');
-    
+
 
     Route::resources([
-                        'institutes' => InstituteController::class,
-                        'vendors' => VendorController::class,
-                        'users' => UserController::class,
-                        'roles' => RoleController::class,
-                        'institute_users' => InstituteUserController::class,
-                        'equipment_suppliers' => EquipmentSupplierController::class,
-                        'vendor_institutes' => VendorInstituteController::class,
-                        'equipments' => EquipmentController::class,
-                        'courses' => CourseController::class,
-                        'tickets' => TicketController::class,
-                        'ask_expert' => AskExpertDetailController::class,
-			'telecom' => TelecomController::class,
-			'teams' => TeamController::class,
-			'payments' => PaymentController::class,
-                    ]);
+        'institutes' => InstituteController::class,
+        'vendors' => VendorController::class,
+        'users' => UserController::class,
+        'roles' => RoleController::class,
+        'institute_users' => InstituteUserController::class,
+        'equipment_suppliers' => EquipmentSupplierController::class,
+        'vendor_institutes' => VendorInstituteController::class,
+        'equipments' => EquipmentController::class,
+        'courses' => CourseController::class,
+        'tickets' => TicketController::class,
+        'ask_expert' => AskExpertDetailController::class,
+        'telecom' => TelecomController::class,
+        'teams' => TeamController::class,
+        'payments' => PaymentController::class,
+    ]);
 
     Route::get('/vendor-institutes', [VendorInstituteController::class, 'vendorInstitutes'])->name('vendor.institutes');
     Route::get('/user/permission/{encryptedId}', [UserController::class, 'permission'])->name('user.permission');
@@ -100,7 +100,7 @@ Route::middleware([
 
 
 
-     /* POC BSNL USER */
+    /* POC BSNL USER */
     Route::get('/list-poc-bsnl-user', [PocBsnlUserController::class, 'index'])->name('poc_bsnl_user.index');
     Route::get('/view-detail-poc-bsnl-user', [PocBsnlUserController::class, 'show'])->name('poc_bsnl_user.show');
 
@@ -159,14 +159,15 @@ Route::middleware([
 
 
 
-    Route::get('/get-equipment-filled-data', [ProjectTimelineController::class, 'get_prefilled_equipment_data'])->name('prefilled_equipment_data');//not in use
+
+    Route::get('/get-equipment-filled-data', [ProjectTimelineController::class, 'get_prefilled_equipment_data'])->name('prefilled_equipment_data'); //not in use
 
 
 
     Route::post('/equipment_data', [ProjectTimelineController::class, 'equipment_data'])->name('equipment_data');
     Route::post('/inst-equipment_data', [ProjectTimelineController::class, 'inst_equipment_data'])->name('inst_equipment_data');
 
-    
+
 
     Route::get('/equipment-specification/{id}', [EquipmentController::class, 'specification'])->name('equipment.specification');
     Route::post('/equipment-specification/{id}', [EquipmentController::class, 'update_specification'])->name('equipment.update_specification');
@@ -185,13 +186,11 @@ Route::middleware([
     Route::post('/inst-update-scheduled-equipments', [ProjectTimelineController::class, 'updateSchedultEquipments'])->name('update-scheduled-equipment');
 
 
-Route::post('/update-dispatch-info', [ProjectTimelineController::class, 'updateDispatchInfo'])->name('update-dispatch-info');
+    Route::post('/update-dispatch-info', [ProjectTimelineController::class, 'updateDispatchInfo'])->name('update-dispatch-info');
     Route::post('/update-scheduled-equipment-action', [ProjectTimelineController::class, 'updateScheduledEquipmentAction'])->name('update-scheduled-equipment-action');
     Route::post('/update-scheduled-equipment-upload', [ProjectTimelineController::class, 'updateScheduledEquipmentUpload'])->name('update-scheduled-equipment-upload');
+    /** Start System Manual */
+    Route::get('/system-manual', [SystemManualController::class, 'index'])->name('system_manual.index');
 
-    
-
-
-
-
+    Route::get('/creare-system-manual', [SystemManualController::class, 'create'])->name('system_manual.create');
 });

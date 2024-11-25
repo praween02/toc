@@ -1,0 +1,1 @@
+<?php /**PATH D:\wamp64\www\projects\dot\resources\views/partials/right-side-bar.blade.php ENDPATH**/ ?>
