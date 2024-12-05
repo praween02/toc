@@ -46,5 +46,8 @@ class SystemManual extends Model
         $equipments = DB::table('equipments')->orderBy('equipment', 'ASC')->get();
         return $equipments;
     }
-    
+    public function equipment()
+    {
+        return $this->belongsTo(Equipment::class, 'equipment_id');
+    }
 }

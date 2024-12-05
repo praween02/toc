@@ -104,7 +104,9 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                   </div>
                 </li>
 
-		
+                <li>
+                  <a href="{{ route('system_manual.index') }}"><i class="fe-menu"></i> <span>{{ __('UAT List') }}</span></a>
+                </li>
 
                 <!-- <li>
                   <a href="#"><i class="fe-user"></i> <span>{{ __('app.user_management') }}</span></a>

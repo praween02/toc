@@ -195,5 +195,6 @@ Route::middleware([
     Route::get('/creare-system-manual', [SystemManualController::class, 'create'])->name('system_manual.create');
 
     Route::post('/creare-system-store', [SystemManualController::class, 'store'])->name('system_manual.store');
+    Route::get('/creare-system-edit/{id}', [SystemManualController::class, 'edit'])->name('system_manual.edit');
 
 });
