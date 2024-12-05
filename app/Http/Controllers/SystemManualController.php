@@ -42,4 +42,38 @@ class SystemManualController extends Controller
 
         return view('pages.system_manual.create', $data);
     }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'equipment_id' => 'required|exists:equipments,id',
+            'document_title' => 'required|string|max:255',
+            'document_description' => 'nullable|string',
+            'document_file' => 'required|file|mimes:pdf|max:10240', // 10MB max for the PDF
+            'no_of_page' => 'required|integer',
+            'type' => 'required|integer',
+        ]);
+
+        // Handle the file upload
+        if ($request->hasFile('document_file')) {
+            // Save the file and get the path
+            $documentFilePath = $request->file('document_file')->store('documents', 'public');
+        }
+
+        // Create the new record in the Tikal table
+        $tikal = SystemManual::create([
+            'equipment_id' => $validatedData['equipment_id'],
+            'document_title' => $validatedData['document_title'],
+            'document_description' => $validatedData['document_description'],
+            'document_file' => $documentFilePath ?? null,  // Save file path if file exists
+            'no_of_page' => $validatedData['no_of_page'],
+            'type' => $validatedData['type'],
+        ]);
+
+        // Redirect back or to a new page with success message
+        return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
+
+
+    }
+
 }
