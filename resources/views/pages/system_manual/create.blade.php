@@ -1,5 +1,8 @@
 @extends('layouts.app')
+
 @section('title', ' - Add System Document')
+
+
 @section('content')
 <style>
     .ck-editor__editable {
@@ -12,6 +15,7 @@
         <div class="container">
 
             <!-- start page title -->
+
             <!-- <div class="row">
                 <div class="col-12">
                     <div class="page-title-box">
@@ -266,6 +270,7 @@
                     </div>
             <!-- Form row -->
             
+
             <!-- end row -->
 
         </div> <!-- container -->

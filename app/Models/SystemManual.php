@@ -14,7 +14,9 @@ class SystemManual extends Model
 {
     use HasFactory;
 
+
     protected $table = 'system_manual';
+
 
     /**
      * The attributes that are mass assignable.
@@ -27,8 +29,11 @@ class SystemManual extends Model
         'document_title',
         'document_description',
         'document_file',
+
         'type',
-        'created_by',
+
+
+   'created_by',
 
     ];
 

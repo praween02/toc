@@ -42,6 +42,7 @@ class SystemManualController extends Controller
 
         return view('pages.system_manual.create', $data);
     }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -74,4 +75,5 @@ class SystemManualController extends Controller
 
 
     }
+
 }
