@@ -24,6 +24,9 @@ class SystemManualDataTable extends DataTable
             ->addColumn('equipment_name', function ($row) {
                 return $row->equipment_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
             })
+            ->addColumn('no_of_page', function ($row) {
+                return $row->no_of_page; 
+            })
             ->addColumn('document_title', function ($row) {
                 return $row->document_title ?? 'N/A';
             })
@@ -43,7 +46,7 @@ class SystemManualDataTable extends DataTable
                 // }
                 return $actions;
             })
-            ->rawColumns(['equipment_name', 'document_title', 'document_file', 'action','type']);
+            ->rawColumns(['equipment_name', 'document_title', 'document_file', 'action','type','no_of_page']);
     }
 
     /**
@@ -60,8 +63,9 @@ class SystemManualDataTable extends DataTable
                 'system_manual.document_title',
                 'system_manual.document_file',
                 'system_manual.type',
+                'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','3');
+            ])->where('system_manual.type','3')->where('system_manual.display',0);
         }else{
             return $model->newQuery()
             ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
@@ -70,8 +74,9 @@ class SystemManualDataTable extends DataTable
                 'system_manual.document_title',
                 'system_manual.document_file',
                 'system_manual.type',
+                'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ]);
+            ])->where('system_manual.display',0);
         }
     }
 
@@ -105,9 +110,11 @@ class SystemManualDataTable extends DataTable
         if (in_array('institute', $roles)){
             return [
                 Column::make('id')->title('ID')->width('5%'),
+                Column::make('type')->title('Type'),
                 Column::make('document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
-                Column::make('type')->title('Type'),
+                Column::make('no_of_page')->title('No Of Page'),
+                
                 
             ];
         }else{
@@ -117,6 +124,7 @@ class SystemManualDataTable extends DataTable
                 Column::make('equipment_name')->title('Equipment Name'), // Change column title
                 Column::make('document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
+                Column::make('no_of_page')->title('No Of Page'),
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)

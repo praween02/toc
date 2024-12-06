@@ -31,8 +31,8 @@ class SystemManual extends Model
         'document_file',
 
         'type',
-
-
+        'display',
+        'no_of_page',
    'created_by',
 
     ];
