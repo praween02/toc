@@ -14,6 +14,10 @@ class SystemManual extends Model
 {
     use HasFactory;
 
+
+    protected $table = 'system_manual';
+
+
     /**
      * The attributes that are mass assignable.
      *
@@ -25,8 +29,11 @@ class SystemManual extends Model
         'document_title',
         'document_description',
         'document_file',
-        'status',
-        'created_by',
+
+        'type',
+
+
+   'created_by',
 
     ];
 
@@ -39,5 +46,8 @@ class SystemManual extends Model
         $equipments = DB::table('equipments')->orderBy('equipment', 'ASC')->get();
         return $equipments;
     }
-    
+    public function equipment()
+    {
+        return $this->belongsTo(Equipment::class, 'equipment_id');
+    }
 }

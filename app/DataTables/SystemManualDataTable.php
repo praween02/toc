@@ -2,16 +2,13 @@
 
 namespace App\DataTables;
 
-use App\Models\Institute;
+use App\Models\SystemManual;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
-use DB;
 
 class SystemManualDataTable extends DataTable
 {
@@ -24,49 +21,57 @@ class SystemManualDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
-            ->addColumn('Document Tital', function ($row) {
-
-                return '<a href="' . route('institute.summary', [encrypt($row->id)]) . '" class="">'.$row->institute.'</a>';
+            ->addColumn('equipment_name', function ($row) {
+                return $row->equipment_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
             })
-
+            ->addColumn('document_title', function ($row) {
+                return $row->document_title ?? 'N/A';
+            })
+            ->addColumn('type', function ($row) {
+                return $row->type==1?'Upload Document':($row->type==2?'Implement Of Documents':'UAT');
+            })
+            ->addColumn('document_file', function ($row) {
+                if ($row->document_file) {
+                    return '<a href="' . asset('storage/' . $row->document_file) . '" target="_blank">View File</a>';
+                }
+                return 'N/A';
+            })
             ->addColumn('action', function ($row) {
-
-                $link = 'N/A';
-                if( ! permission('institute.update')):
-                $link = '<a href="' . route('institute.summary', [encrypt($row->id)]) . '" class="btn-xs btn-primary"><i class="fa fa-eye"></i></a>&nbsp;';
-                $link .= '<a href="' . route('institutes.edit', [$row->id]) . '" class="btn-xs btn-primary"><i class="fa fa-edit"></i></a>';
-                endif;
-                return $link;
-
+                // $actions = '<a href="' . route('system_manual.index', [encrypt($row->id)]) . '" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>';
+                // if (!permission('system_manual.update')) {
+                    $actions = '<a href="' . route('system_manual.edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                // }
+                return $actions;
             })
-            ->rawColumns(['action', 'institute']);
+            ->rawColumns(['equipment_name', 'document_title', 'document_file', 'action','type']);
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(Institute $model): QueryBuilder
+    public function query(SystemManual $model): QueryBuilder
     {
-        if (in_array('vendor', get_roles())) {
-            return Institute::select(['institutes.id', 'institutes.institute'])
-                    ->rightJoin('vendor_zone_institutes', 'institutes.id', '=', 'vendor_zone_institutes.institute_id')
-                    ->join('vendor_zones', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.id')
-                    ->where('vendor_zones.vendor_id', \Auth::user()->id);
-        } else if (in_array('lsa', get_roles())) {
-            return Institute::select(['institutes.id', 'institutes.institute'])
-                    ->rightJoin('lsa_institute', 'institutes.id', '=', 'lsa_institute.institute_id')
-                    ->where('lsa_institute.user_id', \Auth::user()->id)
-                    ->orderBy('institutes.institute', 'ASC');
-        } else if (in_array('nodal', get_roles())) {
-            $lsa_users = DB::table('nodal_lsas')->select('lsa_id')->where('nodal_user_id', current_user_id())->get()->toArray();
-            
-            $lsa_ids = array_column($lsa_users, 'lsa_id');
-            return Institute::select(['institutes.id', 'institutes.institute'])
-                    ->rightJoin('lsa_institute', 'institutes.id', '=', 'lsa_institute.institute_id')
-                    ->whereIn('lsa_institute.user_id', $lsa_ids)
-                    ->orderBy('institutes.institute', 'ASC');
-        } else {
-            return $model->newQuery();
+        $roles = get_roles();
+        if (in_array('institute', $roles)) {
+            return $model->newQuery()
+            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+            ->select([
+                'system_manual.id',
+                'system_manual.document_title',
+                'system_manual.document_file',
+                'system_manual.type',
+                'equipments.equipment as equipment_name', // Select the equipment name from the joined table
+            ])->where('system_manual.type','3');
+        }else{
+            return $model->newQuery()
+            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+            ->select([
+                'system_manual.id',
+                'system_manual.document_title',
+                'system_manual.document_file',
+                'system_manual.type',
+                'equipments.equipment as equipment_name', // Select the equipment name from the joined table
+            ]);
         }
     }
 
@@ -76,18 +81,18 @@ class SystemManualDataTable extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('institutes-table')
+            ->setTableId('system-manual-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom('Bfrtip')
             ->orderBy(0)
-            ->selectStyleSingle()
             ->buttons([
                 Button::make('excel'),
                 Button::make('csv'),
+                Button::make('pdf'),
                 Button::make('print'),
                 Button::make('reset'),
-                Button::make('reload')
+                Button::make('reload'),
             ]);
     }
 
@@ -96,18 +101,30 @@ class SystemManualDataTable extends DataTable
      */
     public function getColumns(): array
     {
-        return [
-            Column::make('#'),
-            Column::make('Product'),
-            Column::make('Document  Tital'),
-            Column::make('Document File'),
-          
-            Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->width(60)
-                ->addClass('text-center')
-        ];
+        $roles = get_roles();
+        if (in_array('institute', $roles)){
+            return [
+                Column::make('id')->title('ID')->width('5%'),
+                Column::make('document_title')->title('Document Title'),
+                Column::make('document_file')->title('Document File'),
+                Column::make('type')->title('Type'),
+                
+            ];
+        }else{
+            return [
+                Column::make('id')->title('ID')->width('5%'),
+                Column::make('type')->title('Type'),
+                Column::make('equipment_name')->title('Equipment Name'), // Change column title
+                Column::make('document_title')->title('Document Title'),
+                Column::make('document_file')->title('Document File'),
+                Column::computed('action')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
+            ];
+        }
+        
     }
 
     /**
@@ -115,6 +132,6 @@ class SystemManualDataTable extends DataTable
      */
     protected function filename(): string
     {
-        return 'Institutes_' . date('YmdHis');
+        return 'SystemManuals_' . date('YmdHis');
     }
 }

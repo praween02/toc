@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\DataTables\SystemManualDataTable;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Session;
 //Load Model
 use App\Models\{Institute, ProjectTimeline, SystemManual};
 
@@ -42,4 +43,42 @@ class SystemManualController extends Controller
 
         return view('pages.system_manual.create', $data);
     }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'document_title' => 'required|string|max:255',
+            'document_description' => 'nullable|string',
+            'document_file' => 'required|file|mimes:pdf|max:10240', // 10MB max for the PDF
+            'no_of_page' => 'required|integer',
+            'type' => 'required|integer',
+        ]);
+
+        $filePath = null;
+        if ($request->hasFile('document_file')) {
+            // Store the file and get the path
+            $filePath = $request->file('document_file')->store('documents', 'custom');
+        }
+
+        // Create the new record in the SystemManual table
+        SystemManual::create([
+            'equipment_id' => $request->input('equipment_id', 0),
+            'document_title' => $validatedData['document_title'],
+            'document_description' => $validatedData['document_description'],
+            'document_file' => $filePath,  // Save file path
+            'no_of_page' => $validatedData['no_of_page'],
+            'type' => $validatedData['type'],
+        ]);
+
+        Session::flash('message', 'Submitted successfully'); 
+        return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
+    }
+    public function edit()
+    {
+        // abort_if(permission('institute.create'), 403, __('app.permission_denied'));
+        $data['equipmentsList'] = $this->systemManual->getEquipmentList();
+
+        return view('pages.system_manual.create', $data);
+    }
+
 }
