@@ -57,7 +57,7 @@ class SystemManualController extends Controller
         $filePath = null;
         if ($request->hasFile('document_file')) {
             // Store the file and get the path
-            $filePath = $request->file('document_file')->store('documents', 'public');
+            $filePath = $request->file('document_file')->store('documents', 'custom');
         }
 
         // Create the new record in the SystemManual table
