@@ -44,41 +44,63 @@ class SystemManualController extends Controller
         return view('pages.system_manual.create', $data);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $id = null)
     {
         $validatedData = $request->validate([
             'document_title' => 'required|string|max:255',
             'document_description' => 'nullable|string',
-            'document_file' => 'required|file|mimes:pdf|max:10240', // 10MB max for the PDF
+            'document_file' => 'nullable|file|max:10240', // Allow nullable file upload for editing
             'no_of_page' => 'required|integer',
             'type' => 'required|integer',
         ]);
 
-        $filePath = null;
+        $filePath = $id ? SystemManual::findOrFail($id)->document_file : null;
+
         if ($request->hasFile('document_file')) {
             // Store the file and get the path
             $filePath = $request->file('document_file')->store('documents', 'custom');
         }
 
-        // Create the new record in the SystemManual table
-        SystemManual::create([
-            'equipment_id' => $request->input('equipment_id', 0),
-            'document_title' => $validatedData['document_title'],
-            'document_description' => $validatedData['document_description'],
-            'document_file' => $filePath,  // Save file path
-            'no_of_page' => $validatedData['no_of_page'],
-            'type' => $validatedData['type'],
-        ]);
-
-        Session::flash('message', 'Submitted successfully'); 
+        // Create or update the record
+        $systemManual = SystemManual::updateOrCreate(
+            ['id' => $id],
+            [
+                'equipment_id' => $request->input('equipment_id', 0),
+                'document_title' => $validatedData['document_title'],
+                'document_description' => $validatedData['document_description'],
+                'document_file' => $filePath,
+                'no_of_page' => $validatedData['no_of_page'],
+                'type' => $validatedData['type'],
+            ]
+        );
+        $message = $id ? 'Updated successfully' : 'Submitted successfully';
+        Session::flash('message', $message);
         return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
     }
-    public function edit()
+    public function edit($id)
     {
-        // abort_if(permission('institute.create'), 403, __('app.permission_denied'));
-        $data['equipmentsList'] = $this->systemManual->getEquipmentList();
+        // Retrieve the record
+        $systemManual = $this->systemManual->findOrFail($id);
 
-        return view('pages.system_manual.create', $data);
+        // Ensure you pass the list of equipment and the current data
+        $data = [
+            'systemManual' => $systemManual,
+            'equipmentsList' => $this->systemManual->getEquipmentList(),
+        ];
+
+        return view('pages.system_manual.edit', $data);
+    }
+
+    public function delete($id)
+    {
+        // Find the record by ID
+        $systemManual = $this->systemManual->findOrFail($id);
+
+        // Update the `display` column to `1`
+        $systemManual->update(['display' => 1]);
+
+        Session::flash('message', 'Record deleted successfully');
+        return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
     }
 
 }
