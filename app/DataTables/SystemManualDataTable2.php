@@ -9,8 +9,9 @@ use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Auth;
 
-class SystemManualDataTable extends DataTable
+class SystemManualDataTable2 extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -21,14 +22,17 @@ class SystemManualDataTable extends DataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
-            ->addColumn('equipment_name', function ($row) {
-                return $row->equipment_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
-            })
             ->addColumn('no_of_page', function ($row) {
                 return $row->no_of_page; 
             })
             ->addColumn('document_title', function ($row) {
                 return $row->document_title ?? 'N/A';
+            })
+            ->addColumn('date', function ($row) {
+                return $row->date ?? 'N/A';
+            })
+            ->addColumn('institute_name', function ($row) {
+                return $row->institute_name ?? 'N/A';
             })
             ->addColumn('type', function ($row) {
                 return $row->type==1?'Upload Document':($row->type==2?'Implement Of Documents':($row->type==3?'Implement Of Documents':'UAT Signature'));
@@ -42,11 +46,11 @@ class SystemManualDataTable extends DataTable
             ->addColumn('action', function ($row) {
                 // $actions = '<a href="' . route('system_manual.index', [encrypt($row->id)]) . '" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>';
                 // if (!permission('system_manual.update')) {
-                    $actions = '<a href="' . route('system_manual.edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                    $actions = '<a href="' . route('system_manual.signature-edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
                 // }
                 return $actions;
             })
-            ->rawColumns(['equipment_name', 'document_title', 'document_file', 'action','type','no_of_page']);
+            ->rawColumns(['document_title', 'document_file', 'action','type','no_of_page','date','institute_name']);
     }
 
     /**
@@ -57,26 +61,28 @@ class SystemManualDataTable extends DataTable
         $roles = get_roles();
         if (in_array('institute', $roles)) {
             return $model->newQuery()
-            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+            ->leftjoin('users', 'users.id', '=', 'system_manual.created_by') // Join with the users table
             ->select([
                 'system_manual.id',
                 'system_manual.document_title',
                 'system_manual.document_file',
                 'system_manual.type',
                 'system_manual.no_of_page',
-                'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','3')->where('system_manual.display',0);
+                'system_manual.date',
+                'users.name as institute_name', // Select the equipment name from the joined table
+            ])->where('system_manual.type','4')->where('system_manual.display',0)->where('created_by',Auth::user()->id);
         }else{
             return $model->newQuery()
-            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+            ->leftjoin('users', 'users.id', '=', 'system_manual.created_by') // Join with the users table
             ->select([
                 'system_manual.id',
                 'system_manual.document_title',
                 'system_manual.document_file',
                 'system_manual.type',
                 'system_manual.no_of_page',
-                'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0);
+                'system_manual.date',
+                'users.name as institute_name', // Select the equipment name from the joined table
+            ])->where('system_manual.type','4')->where('system_manual.display',0);
         }
     }
 
@@ -114,22 +120,24 @@ class SystemManualDataTable extends DataTable
                 Column::make('document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->title('No Of Page'),
-                
+                Column::make('date')->title('Signature Date'),
+                Column::computed('action')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
                 
             ];
         }else{
             return [
                 Column::make('id')->title('ID')->width('5%'),
                 Column::make('type')->title('Type'),
-                Column::make('equipment_name')->title('Equipment Name'), // Change column title
                 Column::make('document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->title('No Of Page'),
-                Column::computed('action')
-                    ->exportable(false)
-                    ->printable(false)
-                    ->width(60)
-                    ->addClass('text-center'),
+                Column::make('date')->title('Signature Date'),
+                Column::make('institute_name')->title('Institute Name'),
+                
             ];
         }
         

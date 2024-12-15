@@ -105,7 +105,11 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                 </li>
 
                 <li>
-                  <a href="{{ route('system_manual.index') }}"><i class="fe-menu"></i> <span>{{ __('UAT List') }}</span></a>
+                  <a href="{{ route('system_manual.index') }}"><i class="fe-menu"></i> <span>{{ __('UAT Procedure') }}</span></a>
+                </li>
+
+                <li>
+                  <a href="{{ route('system_manual.signature-uat') }}"><i class="fe-list"></i> <span>{{ __('UAT Signature Document') }}</span></a>
                 </li>
 
                 <!-- <li>
