@@ -29,7 +29,7 @@ class SystemManual extends Model
         'document_title',
         'document_description',
         'document_file',
-
+        'date',
         'type',
         'display',
         'no_of_page',

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\DataTables\SystemManualDataTable;
+use App\DataTables\SystemManualDataTable2;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Session;
+use Illuminate\Support\Facades\Auth;
 //Load Model
 use App\Models\{Institute, ProjectTimeline, SystemManual};
 
@@ -18,10 +20,11 @@ class SystemManualController extends Controller
     protected $dataTable;
     protected $systemManual;
 
-    public function __construct(SystemManual $systemManual,Institute $institute, ProjectTimeline $projectTimeline, SystemManualDataTable  $systemManualDataTable)
+    public function __construct(SystemManual $systemManual,Institute $institute, ProjectTimeline $projectTimeline, SystemManualDataTable  $systemManualDataTable,SystemManualDataTable2  $systemManualDataTable2)
     { 
         //Define Datatable
         $this->dataTable = $systemManualDataTable;
+        $this->dataTable2 = $systemManualDataTable2;
 
         //Define Model
         $this->institute = $institute;
@@ -36,12 +39,21 @@ class SystemManualController extends Controller
     {
         return $this->dataTable->render('pages.system_manual.index');
     }
+    public function uatSignature()
+    {
+        return $this->dataTable2->render('pages.system_manual.uatSignature');
+    }
     public function create()
     {
         // abort_if(permission('institute.create'), 403, __('app.permission_denied'));
         $data['equipmentsList'] = $this->systemManual->getEquipmentList();
 
         return view('pages.system_manual.create', $data);
+    }
+
+    public function signature_create()
+    {
+        return view('pages.system_manual.uatSignatureCreate');
     }
 
     public function store(Request $request, $id = null)
@@ -60,7 +72,6 @@ class SystemManualController extends Controller
             // Store the file and get the path
             $filePath = $request->file('document_file')->store('documents', 'custom');
         }
-
         // Create or update the record
         $systemManual = SystemManual::updateOrCreate(
             ['id' => $id],
@@ -71,10 +82,15 @@ class SystemManualController extends Controller
                 'document_file' => $filePath,
                 'no_of_page' => $validatedData['no_of_page'],
                 'type' => $validatedData['type'],
+                'date' => $request->input('date')??0000-00-00,
+                'created_by' => Auth::user()->id,
             ]
         );
         $message = $id ? 'Updated successfully' : 'Submitted successfully';
         Session::flash('message', $message);
+        if($validatedData['type']==4){
+            return redirect()->route('system_manual.signature-uat')->with('success', 'Data saved successfully!');
+        }
         return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
     }
     public function edit($id)
@@ -89,6 +105,19 @@ class SystemManualController extends Controller
         ];
 
         return view('pages.system_manual.edit', $data);
+    }
+    public function signature_edit($id)
+    {
+        // Retrieve the record
+        $systemManual = $this->systemManual->findOrFail($id);
+
+        // Ensure you pass the list of equipment and the current data
+        $data = [
+            'systemManual' => $systemManual,
+            'equipmentsList' => $this->systemManual->getEquipmentList(),
+        ];
+
+        return view('pages.system_manual.uatSignatureEdit', $data);
     }
 
     public function delete($id)
