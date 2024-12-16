@@ -106,6 +106,9 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
 		<li>
                   <a href="{{ route('tickets.index') }}"><i class="fe-menu"></i> <span>{{ __('app.tickets_complaints') }}</span></a>
                 </li>
+                <li>
+          <a href="{{ route('system_manual.index') }}"><i class="fe-list"></i> <span>{{ __("Document") }}</span></a>
+        </li>
 
 
 		@endif
