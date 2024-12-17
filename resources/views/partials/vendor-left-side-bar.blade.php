@@ -95,11 +95,11 @@
         </li>
         
         <li>
-          <a href="{{ route('system_manual.index') }}"><i class="fe-list"></i> <span>{{ __("System Manual") }}</span></a>
+          <a href="{{ route('system_manual.index') }}"><i class="fe-list"></i> <span>{{ __("Upload Document") }}</span></a>
         </li>
 
         <li>
-          <a href="{{ route('system_manual.signature-uat') }}"><i class="fe-list"></i> <span>{{ __("Institute Signature Document") }}</span></a>
+          <a href="{{ route('system_manual.signature-uat') }}"><i class="fe-list"></i> <span>{{ __("Institute Sign Document") }}</span></a>
         </li>
 
 
