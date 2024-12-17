@@ -47,7 +47,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="document_file" class="form-label">Document File</label>
+                                    <label for="document_file" class="form-label">Document File <span class="req">only PDF</span></label>
                                     <input type="file" name="document_file" class="form-control" id="document_file">
                                     @if($systemManual->document_file)
                                         <p>Current file: <a href="{{ asset('storage/' . $systemManual->document_file) }}" target="_blank">View</a></p>

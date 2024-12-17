@@ -75,7 +75,7 @@
                                                             </div>
                                                             
                                                             <div class="mb-3">
-                                                                <label for="document_file_1" class="form-label">{{ __('Document File') }} <span class="req">*</span></label>
+                                                                <label for="document_file_1" class="form-label">{{ __('Document File') }} <span class="req">* Only PDF</span></label>
                                                                 <input type="file" accept=".pdf" name="document_file" autocomplete="off" class="form-control" id="document_file_1" placeholder="{{ __('Document File') }}" required>
                                                             </div>
 
