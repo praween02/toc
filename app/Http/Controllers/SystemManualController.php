@@ -18,6 +18,7 @@ class SystemManualController extends Controller
     protected $institute;
     protected $projectTimeline;
     protected $dataTable;
+    protected $dataTable2;
     protected $systemManual;
 
     public function __construct(SystemManual $systemManual,Institute $institute, ProjectTimeline $projectTimeline, SystemManualDataTable  $systemManualDataTable,SystemManualDataTable2  $systemManualDataTable2)
@@ -35,9 +36,9 @@ class SystemManualController extends Controller
 
 
 
-    public function index()
+    public function index(SystemManualDataTable $dataTable)
     {
-        return $this->dataTable->render('pages.system_manual.index');
+        return $dataTable->render('pages.system_manual.index');
     }
     public function uatSignature()
     {

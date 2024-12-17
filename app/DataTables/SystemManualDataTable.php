@@ -8,7 +8,11 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
+use Yajra\DataTables\Html\Editor\Editor;
+use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Crypt;
+
 
 class SystemManualDataTable extends DataTable
 {
@@ -20,6 +24,7 @@ class SystemManualDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+        
             ->setRowId('id')
             ->addColumn('equipment_name', function ($row) {
                 return $row->equipment_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
@@ -91,6 +96,7 @@ class SystemManualDataTable extends DataTable
             ->minifiedAjax()
             ->dom('Bfrtip')
             ->orderBy(0)
+            ->selectStyleSingle()
             ->buttons([
                 Button::make('excel'),
                 Button::make('csv'),
@@ -107,24 +113,22 @@ class SystemManualDataTable extends DataTable
     public function getColumns(): array
     {
         $roles = get_roles();
-        if (in_array('institute', $roles)){
+        if (in_array('institute', $roles)) {
             return [
-                Column::make('id')->title('ID')->width('5%'),
-                Column::make('type')->title('Type'),
-                Column::make('document_title')->title('Document Title'),
-                Column::make('document_file')->title('Document File'),
-                Column::make('no_of_page')->title('No Of Page'),
-                
-                
+                Column::make('id')->title('#'), // Shorter title
+                Column::make('type')->title('Doc Type'), // Abbreviated title
+                Column::make('document_title')->title('Title'), // Simplified title
+                Column::make('document_file')->title('File'), // Simplified title
+                Column::make('no_of_page')->title('Pages'), // Simplified title
             ];
-        }else{
+        } else {
             return [
-                Column::make('id')->title('ID')->width('5%'),
-                Column::make('type')->title('Type'),
-                Column::make('equipment_name')->title('Equipment Name'), // Change column title
-                Column::make('document_title')->title('Document Title'),
-                Column::make('document_file')->title('Document File'),
-                Column::make('no_of_page')->title('No Of Page'),
+                Column::make('id')->title('#'), // Shortest title
+                Column::make('type')->title('Type'), // Shorter title
+                Column::make('equipment_name')->title('Equipment'), // Concise title
+                Column::make('document_title')->title('Title'), // Simplified title
+                Column::make('document_file')->title('File'), // Simplified title
+                Column::make('no_of_page')->title('Pages'), // Simplified title
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
@@ -132,8 +136,8 @@ class SystemManualDataTable extends DataTable
                     ->addClass('text-center'),
             ];
         }
-        
     }
+    
 
     /**
      * Get the filename for export.
