@@ -8,7 +8,12 @@ use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
+use Yajra\DataTables\Html\Editor\Editor;
+use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
+use Illuminate\Support\Facades\Crypt;
+use Session;
+use Illuminate\Support\Facades\Auth;
 
 class SystemManualDataTable extends DataTable
 {
@@ -20,7 +25,11 @@ class SystemManualDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
+        
             ->setRowId('id')
+            ->addColumn('vendor_name', function ($row) {
+                return $row->vendor_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
+            })
             ->addColumn('equipment_name', function ($row) {
                 return $row->equipment_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
             })
@@ -57,7 +66,8 @@ class SystemManualDataTable extends DataTable
         $roles = get_roles();
         if (in_array('institute', $roles)) {
             return $model->newQuery()
-            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+                    //->leftjoin('user_institutes', 'user_institutes.institute_id', '=','vendor_zone_institutes.institute_id')
+                    ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
             ->select([
                 'system_manual.id',
                 'system_manual.document_title',
@@ -65,8 +75,8 @@ class SystemManualDataTable extends DataTable
                 'system_manual.type',
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','3')->where('system_manual.display',0);
-        }else{
+            ])->where('system_manual.type','!=','4')->where('system_manual.display',0);
+        }else if (in_array('vendor', $roles)) {
             return $model->newQuery()
             ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
             ->select([
@@ -76,6 +86,19 @@ class SystemManualDataTable extends DataTable
                 'system_manual.type',
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
+            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('system_manual.created_by',Auth::user()->id);
+        }else{
+            return $model->newQuery()
+            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+            ->leftjoin('users', 'system_manual.created_by', '=', 'users.id') // Join with the equipment table
+            ->select([
+                'system_manual.id',
+                'system_manual.document_title',
+                'system_manual.document_file',
+                'system_manual.type',
+                'system_manual.no_of_page',
+                'equipments.equipment as equipment_name', // Select the equipment name from the joined table
+                'users.name as vendor', // Select the equipment name from the joined table
             ])->where('system_manual.type','!=','4')->where('system_manual.display',0);
         }
     }
@@ -91,6 +114,7 @@ class SystemManualDataTable extends DataTable
             ->minifiedAjax()
             ->dom('Bfrtip')
             ->orderBy(0)
+            ->selectStyleSingle()
             ->buttons([
                 Button::make('excel'),
                 Button::make('csv'),
@@ -107,8 +131,9 @@ class SystemManualDataTable extends DataTable
     public function getColumns(): array
     {
         $roles = get_roles();
-        if (in_array('institute', $roles)){
+        if (in_array('institute', $roles)) {
             return [
+
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
                 Column::make('type')->title('Type'),
                 Column::make('document_title')->title('Document Title'),
@@ -116,15 +141,32 @@ class SystemManualDataTable extends DataTable
                 Column::make('no_of_page')->title('No Of Page'),
                 
                 
+
             ];
-        }else{
+        } else  if (in_array('vendor', $roles)) {
             return [
+                Column::make('id')->title('#'), // Shortest title
+                Column::make('type')->title('Type'), // Shorter title
+                Column::make('equipment_name')->title('Equipment'), // Concise title
+                Column::make('document_title')->title('Title'), // Simplified title
+                Column::make('document_file')->title('File'), // Simplified title
+                Column::make('no_of_page')->title('Pages'), // Simplified title
+                Column::computed('action')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->width(60)
+                    ->addClass('text-center'),
+            ];
+        } else   {
+            return [
+
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
                 Column::make('type')->title('Type'),
                 Column::make('equipment_name')->title('Equipment Name'), // Change column title
                 Column::make('document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->title('No Of Page'),
+
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
@@ -132,8 +174,8 @@ class SystemManualDataTable extends DataTable
                     ->addClass('text-center'),
             ];
         }
-        
     }
+    
 
     /**
      * Get the filename for export.

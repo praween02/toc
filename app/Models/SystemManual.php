@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Model\EquipmentLabStatus;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 
@@ -33,7 +35,7 @@ class SystemManual extends Model
         'type',
         'display',
         'no_of_page',
-   'created_by',
+        'created_by',
 
     ];
 
