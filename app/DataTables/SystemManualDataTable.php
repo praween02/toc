@@ -145,7 +145,7 @@ class SystemManualDataTable extends DataTable
             ];
         } else  if (in_array('vendor', $roles)) {
             return [
-                Column::make('id')->title('#'), // Shortest title
+                Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
                 Column::make('type')->title('Type'), // Shorter title
                 Column::make('equipment_name')->title('Equipment'), // Concise title
                 Column::make('document_title')->title('Title'), // Simplified title
