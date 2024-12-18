@@ -117,7 +117,7 @@ class SystemManualDataTable2 extends DataTable
         $roles = get_roles();
         if (in_array('institute', $roles)){
             return [
-                Column::make('id')->title('ID')->width('5%'),
+                Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
                 Column::make('type')->title('Type'),
                 Column::make('document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
@@ -132,7 +132,7 @@ class SystemManualDataTable2 extends DataTable
             ];
         }else{
             return [
-                Column::make('id')->title('ID')->width('5%'),
+                Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
                 Column::make('type')->title('Type'),
                 Column::make('document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
