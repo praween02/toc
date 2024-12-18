@@ -133,11 +133,15 @@ class SystemManualDataTable extends DataTable
         $roles = get_roles();
         if (in_array('institute', $roles)) {
             return [
-                Column::make('id')->title('#'), // Shorter title
-                Column::make('type')->title('Doc Type'), // Abbreviated title
-                Column::make('document_title')->title('Title'), // Simplified title
-                Column::make('document_file')->title('File'), // Simplified title
-                Column::make('no_of_page')->title('Pages'), // Simplified title
+
+                Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
+                Column::make('type')->title('Type'),
+                Column::make('document_title')->title('Document Title'),
+                Column::make('document_file')->title('Document File'),
+                Column::make('no_of_page')->title('No Of Page'),
+                
+                
+
             ];
         } else  if (in_array('vendor', $roles)) {
             return [
@@ -155,13 +159,14 @@ class SystemManualDataTable extends DataTable
             ];
         } else   {
             return [
-                Column::make('id')->title('#'), // Shortest title
-                Column::make('vendor')->title('Vendor'), // Shortest title
-                Column::make('type')->title('Type'), // Shorter title
-                Column::make('equipment_name')->title('Equipment'), // Concise title
-                Column::make('document_title')->title('Title'), // Simplified title
-                Column::make('document_file')->title('File'), // Simplified title
-                Column::make('no_of_page')->title('Pages'), // Simplified title
+
+                Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
+                Column::make('type')->title('Type'),
+                Column::make('equipment_name')->title('Equipment Name'), // Change column title
+                Column::make('document_title')->title('Document Title'),
+                Column::make('document_file')->title('Document File'),
+                Column::make('no_of_page')->title('No Of Page'),
+
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
