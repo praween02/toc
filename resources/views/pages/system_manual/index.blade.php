@@ -22,7 +22,7 @@
 							@endif
 
 		            		
-		            		
+		            		<!-- {{ ucwords(Auth::user()->id) }}  -->
 		            	</div>
 
 		                {{ $dataTable->table(['class' => 'table table-bordered']) }}
