@@ -1,9 +1,7 @@
 @extends('layouts.app')
 @section('title', ' - System Manual')
 @section('content')
-<style type="text/css">
-table tr td:first-child{width:75%}	
-</style>
+
 <div class="content-page">
     <div class="content">
         <!-- Start Content-->
@@ -24,7 +22,7 @@ table tr td:first-child{width:75%}
 							@endif
 
 		            		
-		            		
+		            		<!-- {{ ucwords(Auth::user()->id) }}  -->
 		            	</div>
 
 		                {{ $dataTable->table(['class' => 'table table-bordered']) }}
