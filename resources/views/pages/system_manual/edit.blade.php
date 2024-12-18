@@ -42,6 +42,12 @@
                                 </div>
 
                                 <div class="mb-3">
+                                    <label for="date" class="form-label">Date<span class="req">*</span></label>
+                                    <input type="date" name="date" class="form-control" id="date"
+                                        value="{{ old('date', $systemManual->date) }}" required>
+                                </div>
+
+                                <div class="mb-3">
                                     <label for="document_description" class="form-label">Document Description</label>
                                     <textarea name="document_description" class="form-control" id="document_description">{{ old('document_description', $systemManual->document_description) }}</textarea>
                                 </div>
@@ -52,12 +58,14 @@
                                     @if($systemManual->document_file)
                                         <p>Current file: <a href="{{ asset('storage/' . $systemManual->document_file) }}" target="_blank">View</a></p>
                                     @endif
+                                    <div class="text-danger mt-2">Only PDF files are allowed for upload.</div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="no_of_page" class="form-label">No of Pages <span class="req">*</span></label>
                                     <input type="number" name="no_of_page" class="form-control" id="no_of_page"
-                                        value="{{ old('no_of_page', $systemManual->no_of_page) }}" required>
+                                        value="{{ old('no_of_page', $systemManual->no_of_page) }}" required min="1">
+                                        <div class="text-danger mt-2" id="no_of_page_error" style="display:none;">The number of pages must be greater than 0.</div>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary">Update</button>
