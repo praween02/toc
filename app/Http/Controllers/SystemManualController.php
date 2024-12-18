@@ -61,8 +61,8 @@ class SystemManualController extends Controller
         $validatedData = $request->validate([
             'document_title' => 'required|string|max:255',
             'document_description' => 'nullable|string',
-            'document_file' => 'nullable|file|max:10240', // Allow nullable file upload for editing
-            'no_of_page' => 'required|integer',
+            'document_file' => 'required|file|mimes:pdf|max:10240', // Allow nullable file upload for editing
+            'no_of_page' => 'required|integer|min:1',
             'type' => 'required|integer',
         ]);
 

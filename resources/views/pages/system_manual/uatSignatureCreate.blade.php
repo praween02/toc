@@ -60,11 +60,13 @@
                                                             <div class="mb-3">
                                                                 <label for="document_file_3" class="form-label">{{ __('Document File') }} <span class="req">*</span></label>
                                                                 <input type="file" accept=".pdf" name="document_file" autocomplete="off" class="form-control" id="document_file_3" placeholder="{{ __('Document File') }}" required>
+                                                                <div class="text-danger mt-2">Only PDF files are allowed for upload.</div>
                                                             </div>
 
                                                             <div class="mb-3">
                                                                 <label for="no_of_page_3" class="form-label">{{ __('No of page') }} <span class="req">*</span></label>
-                                                                <input type="number" name="no_of_page" autocomplete="off" class="form-control" id="no_of_page_3" placeholder="{{ __('No of Document') }}" required>
+                                                                <input type="number" name="no_of_page" autocomplete="off" class="form-control" id="no_of_page_3" placeholder="{{ __('No of Document') }}" required min="1">
+                                                                <div class="text-danger mt-2" id="no_of_page_error" style="display:none;">The number of pages must be greater than 0.</div>
                                                             </div>
 
                                                             <button type="submit" class="btn btn-primary waves-effect waves-light" id="submit-uat">
