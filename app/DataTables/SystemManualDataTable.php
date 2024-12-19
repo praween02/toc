@@ -25,7 +25,7 @@ class SystemManualDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-        
+
             ->setRowId('id')
             ->addColumn('vendor_name', function ($row) {
                 return $row->vendor_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
@@ -34,7 +34,7 @@ class SystemManualDataTable extends DataTable
                 return $row->equipment_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
             })
             ->addColumn('no_of_page', function ($row) {
-                return $row->no_of_page; 
+                return $row->no_of_page;
             })
             ->addColumn('document_title', function ($row) {
                 return $row->document_title ?? 'N/A';
@@ -139,8 +139,8 @@ class SystemManualDataTable extends DataTable
                 Column::make('document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->title('No Of Page'),
-                
-                
+
+
 
             ];
         } else  if (in_array('vendor', $roles)) {
@@ -161,6 +161,7 @@ class SystemManualDataTable extends DataTable
             return [
 
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
+                Column::make('vendor')->title('Vendor'),
                 Column::make('type')->title('Type'),
                 Column::make('equipment_name')->title('Equipment Name'), // Change column title
                 Column::make('document_title')->title('Document Title'),
@@ -175,7 +176,7 @@ class SystemManualDataTable extends DataTable
             ];
         }
     }
-    
+
 
     /**
      * Get the filename for export.
