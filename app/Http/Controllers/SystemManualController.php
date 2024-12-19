@@ -59,13 +59,22 @@ class SystemManualController extends Controller
 
     public function store(Request $request, $id = null)
     {
-        $validatedData = $request->validate([
+        $rules = [
             'document_title' => 'required|string|max:255',
             'document_description' => 'nullable|string',
-            'document_file' => 'required|file|mimes:pdf|max:10240', // Allow nullable file upload for editing
             'no_of_page' => 'required|integer|min:1',
             'type' => 'required|integer',
-        ]);
+        ];
+    
+        // Conditionally make document_file required if $id is null
+        if (is_null($id)) {
+            $rules['document_file'] = 'required|file|mimes:pdf|max:10240';
+        } else {
+            $rules['document_file'] = 'nullable|file|mimes:pdf|max:10240';
+        }
+    
+        // Validate the request
+        $validatedData = $request->validate($rules);
 
         $filePath = $id ? SystemManual::findOrFail($id)->document_file : null;
 
