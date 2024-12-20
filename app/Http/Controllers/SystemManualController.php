@@ -8,6 +8,7 @@ use App\DataTables\SystemManualDataTable2;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Session;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 //Load Model
 use App\Models\{Institute, ProjectTimeline, SystemManual};
@@ -82,6 +83,10 @@ class SystemManualController extends Controller
             // Store the file and get the path
             $filePath = $request->file('document_file')->store('documents', 'custom');
         }
+        $currentDate = Carbon::now();
+
+        // You can format the date as well
+        $formattedDate = $currentDate->format('Y-m-d');
         // Create or update the record
         $systemManual = SystemManual::updateOrCreate(
             ['id' => $id],
@@ -92,7 +97,7 @@ class SystemManualController extends Controller
                 'document_file' => $filePath,
                 'no_of_page' => $validatedData['no_of_page'],
                 'type' => $validatedData['type'],
-                'date' => $request->input('date')??0000-00-00,
+                'date' => $request->input('date')??$formattedDate,
                 'created_by' => Auth::user()->id,
             ]
         );
