@@ -69,10 +69,10 @@
                                                                 <input name="document_title" autocomplete="off" class="form-control" id="document_title_1" placeholder="{{ __('Document Title') }}" required>
                                                             </div>
 
-                                                            <div class="mb-3">
+                                                            <!-- <div class="mb-3">
                                                                 <label for="date" class="form-label">Signature Date<span class="req">*</span></label>
                                                                 <input type="date" name="date" class="form-control" id="date1" required>
-                                                            </div>
+                                                            </div> -->
                                                             
                                                             <div class="mb-3">
                                                                 <label for="document_description_1" class="form-label">{{ __('Document Description') }} </label>
@@ -119,10 +119,10 @@
                                                                 <input name="document_title" autocomplete="off" class="form-control" id="document_title_2" placeholder="{{ __('Document Title') }}" required>
                                                             </div>
 
-                                                            <div class="mb-3">
+                                                            <!-- <div class="mb-3">
                                                                 <label for="date" class="form-label">Signature Date<span class="req">*</span></label>
                                                                 <input type="date" name="date" class="form-control" id="date2" required>
-                                                            </div>
+                                                            </div> -->
                                                             
                                                             <div class="mb-3">
                                                                 <label for="document_description_2" class="form-label">{{ __('Document Description') }} </label>
@@ -170,10 +170,10 @@
                                                                 <input name="document_title" autocomplete="off" class="form-control" id="document_title_3" placeholder="{{ __('Document Title') }}" required>
                                                             </div>
 
-                                                            <div class="mb-3">
+                                                            <!-- <div class="mb-3">
                                                                 <label for="date" class="form-label">Signature Date<span class="req">*</span></label>
                                                                 <input type="date" name="date" class="form-control" id="date3" required>
-                                                            </div>
+                                                            </div> -->
 
                                                             <div class="mb-3">
                                                                 <label for="document_description_3" class="form-label">{{ __('Document Description') }} </label>
