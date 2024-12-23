@@ -10,7 +10,7 @@
 		            <div class="card-body">
 		            	<div class="row">
 
-		            		
+						
 
 							@if(in_array('vendor', get_roles()))
 							<div class="col-md-6 float-left"><h3>{{ __('Upload Document') }}</h3></div>
@@ -28,6 +28,8 @@
 		            		
 		            		<!-- {{ ucwords(Auth::user()->id) }}  -->
 		            	</div>
+
+						
 
 		                {{ $dataTable->table(['class' => 'table table-bordered']) }}
 		            </div>

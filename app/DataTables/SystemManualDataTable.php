@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\SystemManual;
+use Faker\Guesser\Name;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -25,7 +26,7 @@ class SystemManualDataTable extends DataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return (new EloquentDataTable($query))
-        
+
             ->setRowId('id')
             ->addColumn('vendor_name', function ($row) {
                 return $row->vendor_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
@@ -34,7 +35,7 @@ class SystemManualDataTable extends DataTable
                 return $row->equipment_name ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
             })
             ->addColumn('no_of_page', function ($row) {
-                return $row->no_of_page; 
+                return $row->no_of_page;
             })
             ->addColumn('document_title', function ($row) {
                 return $row->document_title ?? 'N/A';
@@ -64,9 +65,12 @@ class SystemManualDataTable extends DataTable
     public function query(SystemManual $model): QueryBuilder
     {
         $roles = get_roles();
+        
         if (in_array('institute', $roles)) {
             return $model->newQuery()
-                    //->leftjoin('user_institutes', 'user_institutes.institute_id', '=','vendor_zone_institutes.institute_id')
+                    ->leftjoin('vendor_zones', 'vendor_zones.vendor_id', '=','system_manual.created_by')
+                    ->rightjoin('vendor_zone_institutes', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.zone_id')
+                    ->rightjoin('user_institutes', 'user_institutes.institute_id', '=', 'vendor_zone_institutes.institute_id')
                     ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
             ->select([
                 'system_manual.id',
@@ -75,7 +79,7 @@ class SystemManualDataTable extends DataTable
                 'system_manual.type',
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0);
+            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('user_institutes.user_id',Auth::user()->id);
         }else if (in_array('vendor', $roles)) {
             return $model->newQuery()
             ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
@@ -136,19 +140,19 @@ class SystemManualDataTable extends DataTable
 
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
                 Column::make('type')->title('Type'),
-                Column::make('document_title')->title('Document Title'),
-                Column::make('document_file')->title('Document File'),
+                Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
+                Column::make('document_file')->name('system_manual.document_file')->title('Document File'),
                 Column::make('no_of_page')->title('No Of Page'),
-                
-                
+
+
 
             ];
         } else  if (in_array('vendor', $roles)) {
             return [
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
-                Column::make('type')->title('Type'), // Shorter title
-                Column::make('equipment_name')->title('Equipment'), // Concise title
-                Column::make('document_title')->title('Title'), // Simplified title
+                Column::make('type')->title('Type')->searchable(true), // Shorter title
+                Column::make('equipment_name')->name('equipments.equipment')->title('equipments.equipment')->searchable(true), // Concise title
+                Column::make('document_title')->name('system_manual.document_title')->title('Title')->searchable(true), // Simplified title
                 Column::make('document_file')->title('File'), // Simplified title
                 Column::make('no_of_page')->title('Pages'), // Simplified title
                 Column::computed('action')
@@ -161,9 +165,10 @@ class SystemManualDataTable extends DataTable
             return [
 
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
-                Column::make('type')->title('Type'),
-                Column::make('equipment_name')->title('Equipment Name'), // Change column title
-                Column::make('document_title')->title('Document Title'),
+                Column::make('vendor')->name('users.name')->title('Vendor'),
+                Column::make('type')->name('system_manual.type')->title('Type'),
+                Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
+                Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->title('No Of Page'),
 
@@ -175,7 +180,7 @@ class SystemManualDataTable extends DataTable
             ];
         }
     }
-    
+
 
     /**
      * Get the filename for export.

@@ -201,5 +201,6 @@ Route::middleware([
     Route::get('/signature-edit/{id}', [SystemManualController::class, 'signature_edit'])->name('system_manual.signature-edit');
     Route::get('/creare-system-delete/{id}', [SystemManualController::class, 'delete'])->name('system_manual.delete');
     Route::post('system_manual/{id?}', [SystemManualController::class, 'store'])->name('system_manual.store');
+    Route::get('/system_manual/getSystemManualList', [SystemManualController::class, 'getSystemManualList'])->name('system_manual.getSystemManualList');
 
 });
