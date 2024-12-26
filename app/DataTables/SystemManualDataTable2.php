@@ -1,7 +1,7 @@
 <?php
 
 namespace App\DataTables;
-
+use Faker\Guesser\Name;
 use App\Models\SystemManual;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
@@ -118,11 +118,11 @@ class SystemManualDataTable2 extends DataTable
         if (in_array('institute', $roles)){
             return [
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
-                Column::make('type')->title('Type'),
-                Column::make('document_title')->title('Document Title'),
+                Column::make('type')->name('system_manual.type')->title('Type'),
+                Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
-                Column::make('no_of_page')->title('No Of Page'),
-                Column::make('date')->title('Signature Date'),
+                Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
+                Column::make('date')->name('system_manual.date')->title('Signature Date'),
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
@@ -133,12 +133,13 @@ class SystemManualDataTable2 extends DataTable
         }else{
             return [
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
-                Column::make('type')->title('Type'),
-                Column::make('document_title')->title('Document Title'),
+                Column::make('institute_name')->name('users.name')->title('Institute Name'),
+                Column::make('type')->name('system_manual.type')->title('Type'),
+                Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
-                Column::make('no_of_page')->title('No Of Page'),
-                Column::make('date')->title('Signature Date'),
-                Column::make('institute_name')->title('Institute Name'),
+                Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
+                Column::make('date')->name('system_manual.date')->title('Signature Date'),
+                
                 
             ];
         }
