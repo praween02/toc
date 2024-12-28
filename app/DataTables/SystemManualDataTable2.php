@@ -37,7 +37,7 @@ class SystemManualDataTable2 extends DataTable
                 return $row->institute_name ?? 'N/A';
             })
             ->addColumn('type', function ($row) {
-                return $row->type==1?'Upload Document':($row->type==2?'Implement Of Documents':($row->type==3?'Implement Of Documents':'UAT Signature'));
+                return $row->type==1?'Upload Document':($row->type==2?'Implement Of Documents':($row->type==3?'Implement Of Documents':'UAT Sign Document'));
             })
             ->addColumn('document_file', function ($row) {
                 if ($row->document_file) {
