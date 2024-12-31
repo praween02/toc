@@ -41,11 +41,11 @@
                                         value="{{ old('document_title', $systemManual->document_title) }}" required>
                                 </div>
 
-                                <!-- <div class="mb-3">
-                                    <label for="date" class="form-label">Signature Date<span class="req">*</span></label> -->
-                                    <input type="hidden" name="date" class="form-control" id="date"
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Sign Date<span class="req">*</span></label>
+                                    <input type="date" name="date" class="form-control" id="date"
                                         value="{{ old('date', $systemManual->date) }}" required>
-                                <!-- </div> -->
+                                </div>
 
                                 <div class="mb-3">
                                     <label for="document_description" class="form-label">Document Description</label>
