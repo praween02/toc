@@ -24,6 +24,7 @@
 </div>
 @endsection
 
+
 @push('scripts')
     @include('sections.datatable_js')
 @endpush

@@ -86,7 +86,6 @@ class SystemManualController extends Controller
             $filePath = $request->file('document_file')->store('documents', 'custom');
         }
         $currentDate = Carbon::now();
-
         // You can format the date as well
         $formattedDate = $currentDate->format('Y-m-d');
         // Create or update the record

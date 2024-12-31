@@ -107,7 +107,7 @@ class SystemManualDataTable2 extends DataTable
                 Button::make('reset'),
                 Button::make('reload'),
             ]);
-    }
+    } 
 
     /**
      * Get the dataTable columns definition.
