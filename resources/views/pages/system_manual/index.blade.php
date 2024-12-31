@@ -9,7 +9,6 @@
 		        <div class="card">               
 		            <div class="card-body">
 		            	<div class="row">
-
 						
 
 							@if(in_array('vendor', get_roles()))
