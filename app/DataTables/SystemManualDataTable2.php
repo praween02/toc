@@ -72,7 +72,7 @@ class SystemManualDataTable2 extends DataTable
                 'system_manual.no_of_page',
                 'system_manual.date',
                 'users.name as institute_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','4')->where('system_manual.display',0)->where('created_by',Auth::user()->id);
+            ])->where('system_manual.type','4')->where('system_manual.display',0)->where('created_by',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
         }else{
             return $model->newQuery()
             ->leftjoin('users', 'users.id', '=', 'system_manual.created_by') // Join with the users table
@@ -84,7 +84,7 @@ class SystemManualDataTable2 extends DataTable
                 'system_manual.no_of_page',
                 'system_manual.date',
                 'users.name as institute_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','4')->where('system_manual.display',0);
+            ])->where('system_manual.type','4')->where('system_manual.display',0)->orderBy('system_manual.id', 'DESC');
         }
     }
 
@@ -100,10 +100,10 @@ class SystemManualDataTable2 extends DataTable
             ->dom('Bfrtip')
             ->orderBy(0)
             ->buttons([
-                Button::make('excel'),
-                Button::make('csv'),
-                Button::make('pdf'),
-                Button::make('print'),
+                // Button::make('excel'),
+                // Button::make('csv'),
+                // Button::make('pdf'),
+                // Button::make('print'),
                 Button::make('reset'),
                 Button::make('reload'),
             ]);

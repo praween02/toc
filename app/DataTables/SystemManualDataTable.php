@@ -79,7 +79,7 @@ class SystemManualDataTable extends DataTable
                 'system_manual.type',
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('user_institutes.user_id',Auth::user()->id);
+            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('user_institutes.user_id',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
         }else if (in_array('vendor', $roles)) {
             return $model->newQuery()
             ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
@@ -90,7 +90,7 @@ class SystemManualDataTable extends DataTable
                 'system_manual.type',
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('system_manual.created_by',Auth::user()->id);
+            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('system_manual.created_by',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
         }else{
             return $model->newQuery()
             ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
@@ -103,7 +103,7 @@ class SystemManualDataTable extends DataTable
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
                 'users.name as vendor', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0);
+            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->orderBy('system_manual.id', 'DESC');
         }
     }
 
@@ -120,10 +120,10 @@ class SystemManualDataTable extends DataTable
             ->orderBy(0)
             ->selectStyleSingle()
             ->buttons([
-                Button::make('excel'),
-                Button::make('csv'),
-                Button::make('pdf'),
-                Button::make('print'),
+                // Button::make('excel'),
+                // Button::make('csv'),
+                // Button::make('pdf'),
+                // Button::make('print'),
                 Button::make('reset'),
                 Button::make('reload'),
             ]);
