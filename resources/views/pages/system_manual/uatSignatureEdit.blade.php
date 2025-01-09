@@ -41,11 +41,11 @@
                                         value="{{ old('document_title', $systemManual->document_title) }}" required>
                                 </div>
 
-                                <!-- <div class="mb-3">
-                                    <label for="date" class="form-label">Signature Date<span class="req">*</span></label> -->
-                                    <input type="hidden" name="date" class="form-control" id="date"
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">Sign Date<span class="req">*</span></label>
+                                    <input type="date" name="date" class="form-control" id="date"
                                         value="{{ old('date', $systemManual->date) }}" required>
-                                <!-- </div> -->
+                                </div>
 
                                 <div class="mb-3">
                                     <label for="document_description" class="form-label">Document Description</label>
@@ -54,7 +54,7 @@
 
                                 <div class="mb-3">
                                     <label for="document_file" class="form-label">Document File</label>
-                                    <input type="file" name="document_file" class="form-control" id="document_file">
+                                    <input type="file" accept=".pdf" name="document_file" class="form-control" id="document_file">
                                     @if($systemManual->document_file)
                                         <p>Current file: <a href="{{ asset('storage/' . $systemManual->document_file) }}" target="_blank">View</a></p>
                                     @endif
