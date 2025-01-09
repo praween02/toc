@@ -28,10 +28,10 @@
                             <div class="row jumbotron box8">
                                 <nav>
                                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                    @if(in_array('vendor', get_roles()))
+                                    @if(!in_array('institute', get_roles()))
                                         <button class="nav-link active" id="nav-application-tab" data-bs-toggle="tab" data-bs-target="#nav-application" type="button" role="tab" aria-controls="nav-application" aria-selected="true">System Manual</button>
-                                        <button class="nav-link" id="nav-documents-tab" data-bs-toggle="tab" data-bs-target="#nav-documents" type="button" role="tab" aria-controls="nav-documents" aria-selected="true">Lab Implemention Document</button>
-                                        <button class="nav-link" id="nav-project-solution-tab" data-bs-toggle="tab" data-bs-target="#nav-project-solution" type="button" role="tab" aria-controls="nav-project-solution" aria-selected="false">UAT Procedure Document</button>
+                                        <button class="nav-link" id="nav-documents-tab" data-bs-toggle="tab" data-bs-target="#nav-documents" type="button" role="tab" aria-controls="nav-documents" aria-selected="true">Lab Implemention</button>
+                                        <button class="nav-link" id="nav-project-solution-tab" data-bs-toggle="tab" data-bs-target="#nav-project-solution" type="button" role="tab" aria-controls="nav-project-solution" aria-selected="false">UAT Procedure</button>
                                     @endif
                                     </div>
                                 </nav>
@@ -39,7 +39,7 @@
                                 <div class="tab-content" id="nav-tabContent">
                                     
                                     <!-- Upload Document Tab -->
-                                    @if(in_array('vendor', get_roles()))
+                                    @if(!in_array('institute', get_roles()))
                                     <div class="mpm-10 tab-pane fade show active" id="nav-application" role="tabpanel" aria-labelledby="nav-application-tab">
                                         <div class="row">
                                             <div class="col-lg-12 co-sm-12 col-md-12">
@@ -200,7 +200,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if(in_array('vendor', get_roles()))
+                                        @if(!in_array('institute', get_roles()))
                                     </div>
                                     @endif
 
