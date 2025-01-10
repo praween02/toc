@@ -126,7 +126,7 @@ class SystemManualDataTable2 extends DataTable
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
-                Column::make('date')->name('system_manual.date')->title('Signature Date'),
+                Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
@@ -142,7 +142,7 @@ class SystemManualDataTable2 extends DataTable
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
-                Column::make('date')->name('system_manual.date')->title('Signature Date'),
+                Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
                 
                 
             ];
