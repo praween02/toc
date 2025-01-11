@@ -42,7 +42,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="date" class="form-label">Signature Date<span class="req">*</span></label>
+                                    <label for="date" class="form-label">Receipt Of Goods Date<span class="req">*</span></label>
                                     <input type="date" name="date" class="form-control" id="date"
                                         value="{{ old('date', $systemManual->date) }}" required>
                                 </div>
@@ -53,7 +53,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="document_file" class="form-label">Document File</label>
+                                    <label for="document_file" class="form-label">Document Of Receipt Of Goods</label>
                                     <input type="file" accept=".pdf" name="document_file" class="form-control" id="document_file">
                                     @if($systemManual->document_file)
                                         <p>Current file: <a href="{{ asset('storage/' . $systemManual->document_file) }}" target="_blank">View</a></p>

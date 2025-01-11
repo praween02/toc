@@ -195,10 +195,12 @@ Route::middleware([
 
     Route::get('/creare-system-manual', [SystemManualController::class, 'create'])->name('system_manual.create');
     Route::get('/signature-create', [SystemManualController::class, 'signature_create'])->name('system_manual.signature-create');
+    Route::get('/receipt-goods-create', [SystemManualController::class, 'receipt_goods_create'])->name('system_manual.receipt-goods-create');
 
     Route::post('/creare-system-store', [SystemManualController::class, 'store'])->name('system_manual.store');
     Route::get('/creare-system-edit/{id}', [SystemManualController::class, 'edit'])->name('system_manual.edit');
     Route::get('/signature-edit/{id}', [SystemManualController::class, 'signature_edit'])->name('system_manual.signature-edit');
+    Route::get('/receipt-goods-edit/{id}', [SystemManualController::class, 'receipt_goods_edit'])->name('system_manual.receipt-goods-edit');
     Route::get('/creare-system-delete/{id}', [SystemManualController::class, 'delete'])->name('system_manual.delete');
     Route::post('system_manual/{id?}', [SystemManualController::class, 'store'])->name('system_manual.store');
     Route::get('/system_manual/getSystemManualList', [SystemManualController::class, 'getSystemManualList'])->name('system_manual.getSystemManualList');
