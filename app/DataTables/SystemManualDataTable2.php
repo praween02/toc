@@ -37,7 +37,7 @@ class SystemManualDataTable2 extends DataTable
                 return $row->institute_name ?? 'N/A';
             })
             ->addColumn('type', function ($row) {
-                return $row->type==1?'Upload Document':($row->type==2?'Implement Of Documents':($row->type==3?'Implement Of Documents':'UAT Sign Document'));
+                return $row->type==1?'Upload Document':($row->type==2?'Implement Of Documents':($row->type==3?'Implement Of Documents':($row->type==4?'UAT Sign Document':'Receipt of goods Document')));
             })
             ->addColumn('document_file', function ($row) {
                 if ($row->document_file) {
@@ -48,7 +48,11 @@ class SystemManualDataTable2 extends DataTable
             ->addColumn('action', function ($row) {
                 // $actions = '<a href="' . route('system_manual.index', [encrypt($row->id)]) . '" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>';
                 // if (!permission('system_manual.update')) {
+                if($row->type==4){
                     $actions = '<a href="' . route('system_manual.signature-edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                }else{
+                    $actions = '<a href="' . route('system_manual.receipt-goods-edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                }
                 // }
                 return $actions;
             })
@@ -72,7 +76,7 @@ class SystemManualDataTable2 extends DataTable
                 'system_manual.no_of_page',
                 'system_manual.date',
                 'users.name as institute_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','4')->where('system_manual.display',0)->where('created_by',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
+            ])->whereIn('system_manual.type',['4','5'])->where('system_manual.display',0)->where('created_by',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
         }else{
             return $model->newQuery()
             ->leftjoin('users', 'users.id', '=', 'system_manual.created_by') // Join with the users table
@@ -84,7 +88,7 @@ class SystemManualDataTable2 extends DataTable
                 'system_manual.no_of_page',
                 'system_manual.date',
                 'users.name as institute_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','4')->where('system_manual.display',0)->orderBy('system_manual.id', 'DESC');
+            ])->whereIn('system_manual.type',['4','5'])->where('system_manual.display',0)->orderBy('system_manual.id', 'DESC');
         }
     }
 
@@ -122,7 +126,7 @@ class SystemManualDataTable2 extends DataTable
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
-                Column::make('date')->name('system_manual.date')->title('Signature Date'),
+                Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
@@ -138,7 +142,7 @@ class SystemManualDataTable2 extends DataTable
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
                 Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
-                Column::make('date')->name('system_manual.date')->title('Signature Date'),
+                Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
                 
                 
             ];
