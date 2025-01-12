@@ -104,11 +104,11 @@ class SystemManualDataTable2 extends DataTable
             ->dom('Bfrtip')
             ->orderBy(0)
             ->buttons([
-                // Button::make('excel'),
+                Button::make('excel'),
                 // Button::make('csv'),
-                // Button::make('pdf'),
-                // Button::make('print'),
-                Button::make('reset'),
+                Button::make('pdf'),
+                Button::make('print'),
+                // Button::make('reset'),
                 Button::make('reload'),
             ]);
     } 
