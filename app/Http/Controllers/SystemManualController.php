@@ -109,10 +109,16 @@ class SystemManualController extends Controller
         );
         $message = $id ? 'Updated successfully' : 'Submitted successfully';
         Session::flash('message', $message);
-        if ($validatedData['type'] == 4 || $validatedData['type'] == 5) {
-            return redirect()->route('system_manual.signature-uat')->with('success', 'Data saved successfully!');
+        $roles = get_roles();
+        if (!in_array('super_admin', $roles)) {
+            if ($validatedData['type'] == 4 || $validatedData['type'] == 5) {
+                return redirect()->route('system_manual.signature-uat')->with('success', 'Data saved successfully!');
+            }
+            return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
+        }else{
+            return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
         }
-        return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
+        
     }
     public function edit($id)
     {

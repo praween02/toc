@@ -15,7 +15,7 @@
     }
 </style>
 <div class="content-page">
-@if(in_array('institute', get_roles()))
+@if(in_array('institute', get_roles()) || in_array('super_admin', get_roles()))
     <div class="content">
         <!-- Start Content-->
         <div class="container">

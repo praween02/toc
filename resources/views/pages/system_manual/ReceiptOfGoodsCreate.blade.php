@@ -15,7 +15,7 @@
     }
 </style>
 <div class="content-page">
-@if(in_array('institute', get_roles()))
+@if(in_array('institute', get_roles()) || in_array('super_admin', get_roles()))
     <div class="content">
         <!-- Start Content-->
         <div class="container">
@@ -28,7 +28,7 @@
                             <!-- Upload Document Form -->
                             <div class="row jumbotron box8">
                                 <div class="tab-content" id="nav-tabContent">
-                                    
+                                <!-- <button onclick="history.back()">Go Back</button> -->
                                     <!-- Upload Document Tab -->
                                    
                                         <div class="row">

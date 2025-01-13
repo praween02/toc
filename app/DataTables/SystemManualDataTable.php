@@ -41,7 +41,7 @@ class SystemManualDataTable extends DataTable
                 return $row->document_title ?? 'N/A';
             })
             ->addColumn('type', function ($row) {
-                return $row->type==1?'System Manual':($row->type==2?'Lab Implemention Document':($row->type==3?'UAT Document':'UAT Signature'));
+                return $row->type==1?'Upload Document':($row->type==2?'Implement Of Documents':($row->type==3?'Implement Of Documents':($row->type==4?'UAT Sign Document':'Receipt of goods Document')));
             })
             ->addColumn('document_file', function ($row) {
                 if ($row->document_file) {
@@ -52,7 +52,14 @@ class SystemManualDataTable extends DataTable
             ->addColumn('action', function ($row) {
                 // $actions = '<a href="' . route('system_manual.index', [encrypt($row->id)]) . '" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>';
                 // if (!permission('system_manual.update')) {
-                    $actions = '<a href="' . route('system_manual.edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                    if($row->type==4){
+                        $actions = '<a href="' . route('system_manual.signature-edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                    }elseif($row->type==5){
+                        $actions = '<a href="' . route('system_manual.receipt-goods-edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                    }else{
+                        $actions = '<a href="' . route('system_manual.edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                    }
+                    
                 // }
                 return $actions;
             })
@@ -79,7 +86,7 @@ class SystemManualDataTable extends DataTable
                 'system_manual.type',
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('user_institutes.user_id',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
+            ])->where('system_manual.type','!=','4')->where('system_manual.type','!=','5')->where('system_manual.display',0)->where('user_institutes.user_id',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
         }else if (in_array('vendor', $roles)) {
             return $model->newQuery()
             ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
@@ -90,7 +97,7 @@ class SystemManualDataTable extends DataTable
                 'system_manual.type',
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('system_manual.created_by',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
+            ])->where('system_manual.type','!=','4')->where('system_manual.type','!=','5')->where('system_manual.display',0)->where('system_manual.created_by',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
         }else{
             return $model->newQuery()
             ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
@@ -103,7 +110,7 @@ class SystemManualDataTable extends DataTable
                 'system_manual.no_of_page',
                 'equipments.equipment as equipment_name', // Select the equipment name from the joined table
                 'users.name as vendor', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->orderBy('system_manual.id', 'DESC');
+            ])->where('system_manual.display',0)->orderBy('system_manual.id', 'DESC');
         }
     }
 
@@ -120,11 +127,11 @@ class SystemManualDataTable extends DataTable
             ->orderBy(0)
             ->selectStyleSingle()
             ->buttons([
-                // Button::make('excel'),
+                Button::make('excel'),
                 // Button::make('csv'),
-                // Button::make('pdf'),
-                // Button::make('print'),
-                Button::make('reset'),
+                Button::make('pdf'),
+                Button::make('print'),
+                // Button::make('reset'),
                 Button::make('reload'),
             ]);
     }
