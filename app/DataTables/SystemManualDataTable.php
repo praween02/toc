@@ -41,7 +41,7 @@ class SystemManualDataTable extends DataTable
                 return $row->document_title ?? 'N/A';
             })
             ->addColumn('type', function ($row) {
-                return $row->type==1?'System Manual':($row->type==2?'Lab Implemention Document':($row->type==3?'UAT Document':'UAT Signature'));
+                return $row->type == 1 ? 'System Manual' : ($row->type == 2 ? 'Lab Implemention Document' : ($row->type == 3 ? 'UAT Document' : 'UAT Signature'));
             })
             ->addColumn('document_file', function ($row) {
                 if ($row->document_file) {
@@ -52,11 +52,11 @@ class SystemManualDataTable extends DataTable
             ->addColumn('action', function ($row) {
                 // $actions = '<a href="' . route('system_manual.index', [encrypt($row->id)]) . '" class="btn btn-sm btn-primary"><i class="fa fa-eye"></i></a>';
                 // if (!permission('system_manual.update')) {
-                    $actions = '<a href="' . route('system_manual.edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                $actions = '<a href="' . route('system_manual.edit', [$row->id]) . '" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
                 // }
                 return $actions;
             })
-            ->rawColumns(['equipment_name', 'document_title', 'document_file', 'action','type','no_of_page']);
+            ->rawColumns(['equipment_name', 'document_title', 'document_file', 'action', 'type', 'no_of_page']);
     }
 
     /**
@@ -65,45 +65,45 @@ class SystemManualDataTable extends DataTable
     public function query(SystemManual $model): QueryBuilder
     {
         $roles = get_roles();
-        
+
         if (in_array('institute', $roles)) {
             return $model->newQuery()
-                    ->leftjoin('vendor_zones', 'vendor_zones.vendor_id', '=','system_manual.created_by')
-                    ->rightjoin('vendor_zone_institutes', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.zone_id')
-                    ->rightjoin('user_institutes', 'user_institutes.institute_id', '=', 'vendor_zone_institutes.institute_id')
-                    ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
-            ->select([
-                'system_manual.id',
-                'system_manual.document_title',
-                'system_manual.document_file',
-                'system_manual.type',
-                'system_manual.no_of_page',
-                'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('user_institutes.user_id',Auth::user()->id);
-        }else if (in_array('vendor', $roles)) {
+                ->leftjoin('vendor_zones', 'vendor_zones.vendor_id', '=', 'system_manual.created_by')
+                ->rightjoin('vendor_zone_institutes', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.zone_id')
+                ->rightjoin('user_institutes', 'user_institutes.institute_id', '=', 'vendor_zone_institutes.institute_id')
+                ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+                ->select([
+                    'system_manual.id',
+                    'system_manual.document_title',
+                    'system_manual.document_file',
+                    'system_manual.type',
+                    'system_manual.no_of_page',
+                    'equipments.equipment as equipment_name', // Select the equipment name from the joined table
+                ])->where('system_manual.type', '!=', '4')->where('system_manual.display', 0)->where('user_institutes.user_id', Auth::user()->id);
+        } else if (in_array('vendor', $roles)) {
             return $model->newQuery()
-            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
-            ->select([
-                'system_manual.id',
-                'system_manual.document_title',
-                'system_manual.document_file',
-                'system_manual.type',
-                'system_manual.no_of_page',
-                'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0)->where('system_manual.created_by',Auth::user()->id);
-        }else{
+                ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+                ->select([
+                    'system_manual.id',
+                    'system_manual.document_title',
+                    'system_manual.document_file',
+                    'system_manual.type',
+                    'system_manual.no_of_page',
+                    'equipments.equipment as equipment_name', // Select the equipment name from the joined table
+                ])->where('system_manual.type', '!=', '4')->where('system_manual.display', 0)->where('system_manual.created_by', Auth::user()->id);
+        } else {
             return $model->newQuery()
-            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
-            ->leftjoin('users', 'system_manual.created_by', '=', 'users.id') // Join with the equipment table
-            ->select([
-                'system_manual.id',
-                'system_manual.document_title',
-                'system_manual.document_file',
-                'system_manual.type',
-                'system_manual.no_of_page',
-                'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-                'users.name as vendor', // Select the equipment name from the joined table
-            ])->where('system_manual.type','!=','4')->where('system_manual.display',0);
+                ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+                ->leftjoin('users', 'system_manual.created_by', '=', 'users.id') // Join with the equipment table
+                ->select([
+                    'system_manual.id',
+                    'system_manual.document_title',
+                    'system_manual.document_file',
+                    'system_manual.type',
+                    'system_manual.no_of_page',
+                    'equipments.equipment as equipment_name', // Select the equipment name from the joined table
+                    'users.name as vendor', // Select the equipment name from the joined table
+                ])->where('system_manual.type', '!=', '4')->where('system_manual.display', 0);
         }
     }
 
@@ -161,7 +161,7 @@ class SystemManualDataTable extends DataTable
                     ->width(60)
                     ->addClass('text-center'),
             ];
-        } else   {
+        } else {
             return [
 
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
