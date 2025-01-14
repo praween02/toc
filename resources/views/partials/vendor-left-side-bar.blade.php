@@ -99,7 +99,7 @@
         </li>
 
         <li>
-          <a href="{{ route('system_manual.signature-uat') }}"><i class="fe-list"></i> <span>{{ __("Institute Sign Document") }}</span></a>
+          <a href="{{ route('system_manual.signature-uat') }}"><i class="fe-list"></i> <span>{{ __("Institute Document") }}</span></a>
         </li>
 
 

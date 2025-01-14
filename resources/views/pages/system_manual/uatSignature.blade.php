@@ -1,9 +1,7 @@
 @extends('layouts.app')
 @section('title', ' - System Manual')
 @section('content')
-<style type="text/css">
-table tr td:first-child{width:75%}	
-</style>
+
 <div class="content-page">
     <div class="content">
         <!-- Start Content-->
@@ -11,9 +9,13 @@ table tr td:first-child{width:75%}
 		        <div class="card">               
 		            <div class="card-body">
 		            	<div class="row">
-							<div class="col-md-6 float-left"><h3>{{ __('UAT Signature Document') }}</h3></div>
+							<div class="col-md-6 float-left"><h3>{{ __('UAT Sign Document') }}</h3></div>
                             @if(in_array('institute', get_roles()))
-		            			<div class="col-md-6 text-end"><a href="{{ route('system_manual.signature-create') }}" class="btn-primary f-14 p-2 mr-3 float-right mb-2 mb-lg-0 mb-md-0"><i class="fa fa-plus"></i> {{ __('UAT Signature Document') }}</a></div>
+		            			<div class="col-md-6 text-end">
+								<a href="{{ route('system_manual.create') }}" class="btn-primary f-14 p-2 mr-3 float-right mb-2 mb-lg-0 mb-md-0"><i class="fa fa-plus"></i> {{ __('Document') }}</a>
+									<!-- <a href="{{ route('system_manual.signature-create') }}" class="btn-primary f-14 p-2 mr-3 float-right mb-2 mb-lg-0 mb-md-0"><i class="fa fa-plus"></i> {{ __('UAT Signed Document') }}</a>
+								<a href="{{ route('system_manual.receipt-goods-create') }}" class="btn-primary f-14 p-2 mr-3 float-right mb-2 mb-lg-0 mb-md-0"><i class="fa fa-plus"></i> {{ __('Receipt of goods Document') }}</a> -->
+							</div>
                                 @endif
                             </div>
 
@@ -25,6 +27,7 @@ table tr td:first-child{width:75%}
 	</div>
 </div>
 @endsection
+
 
 @push('scripts')
     @include('sections.datatable_js')

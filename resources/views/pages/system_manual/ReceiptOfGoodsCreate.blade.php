@@ -28,7 +28,7 @@
                             <!-- Upload Document Form -->
                             <div class="row jumbotron box8">
                                 <div class="tab-content" id="nav-tabContent">
-                                    
+                                <!-- <button onclick="history.back()">Go Back</button> -->
                                     <!-- Upload Document Tab -->
                                    
                                         <div class="row">
@@ -41,14 +41,14 @@
                                                                 <p><span class="req">*</span> = required fields</p>
                                                             </div>
 
-                                                            <input type="hidden" name="type" value="4">
+                                                            <input type="hidden" name="type" value="5">
                                                             <div class="mb-3">
                                                                 <label for="document_title_3" class="form-label">{{ __('Document Title') }} <span class="req">*</span></label>
                                                                 <input name="document_title" autocomplete="off" class="form-control" id="document_title_3" placeholder="{{ __('Document Title') }}" required>
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <label for="date_3" class="form-label">{{ __('Signature Date') }} <span class="req">*</span></label>
+                                                                <label for="date_3" class="form-label">{{ __('Receipt Of Goods Date') }} <span class="req">*</span></label>
                                                                 <input type="date" name="date" autocomplete="off" class="form-control" id="date_3"  required>
                                                             </div>
 
@@ -58,7 +58,7 @@
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <label for="document_file_3" class="form-label">{{ __('Document File') }} <span class="req">*</span></label>
+                                                                <label for="document_file_3" class="form-label">{{ __('Document Of Receipt Of Goods') }} <span class="req">*</span></label>
                                                                 <input type="file" accept=".pdf" name="document_file" autocomplete="off" class="form-control" id="document_file_3" placeholder="{{ __('Document File') }}" required>
                                                                 <div class="text-danger mt-2">Only PDF files are allowed for upload.</div>
                                                             </div>

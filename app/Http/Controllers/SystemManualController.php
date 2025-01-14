@@ -60,6 +60,11 @@ class SystemManualController extends Controller
         return view('pages.system_manual.uatSignatureCreate');
     }
 
+    public function receipt_goods_create()
+    {
+        return view('pages.system_manual.ReceiptOfGoodsCreate');
+    }
+
     public function store(Request $request, $id = null)
     {
         $rules = [
@@ -86,7 +91,6 @@ class SystemManualController extends Controller
             $filePath = $request->file('document_file')->store('documents', 'custom');
         }
         $currentDate = Carbon::now();
-
         // You can format the date as well
         $formattedDate = $currentDate->format('Y-m-d');
         // Create or update the record
@@ -105,10 +109,16 @@ class SystemManualController extends Controller
         );
         $message = $id ? 'Updated successfully' : 'Submitted successfully';
         Session::flash('message', $message);
-        if ($validatedData['type'] == 4) {
-            return redirect()->route('system_manual.signature-uat')->with('success', 'Data saved successfully!');
+        $roles = get_roles();
+        if (!in_array('super_admin', $roles)) {
+            if ($validatedData['type'] == 4 || $validatedData['type'] == 5) {
+                return redirect()->route('system_manual.signature-uat')->with('success', 'Data saved successfully!');
+            }
+            return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
+        }else{
+            return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
         }
-        return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
+        
     }
     public function edit($id)
     {
@@ -135,6 +145,20 @@ class SystemManualController extends Controller
         ];
 
         return view('pages.system_manual.uatSignatureEdit', $data);
+    }
+
+    public function receipt_goods_edit($id)
+    {
+        // Retrieve the record
+        $systemManual = $this->systemManual->findOrFail($id);
+
+        // Ensure you pass the list of equipment and the current data
+        $data = [
+            'systemManual' => $systemManual,
+            'equipmentsList' => $this->systemManual->getEquipmentList(),
+        ];
+
+        return view('pages.system_manual.ReceiptOfGoodsEdit', $data);
     }
 
     public function delete($id)
