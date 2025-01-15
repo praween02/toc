@@ -213,7 +213,8 @@
                                         </div>
                                     </div>
                                     @endif
-                                    <div class="mpm-10 tab-pane fade show active" id="nav-infrastructure" role="tabpanel" aria-labelledby="nav-infrastructure-tab">    
+                                    @if(!in_array('vendor', get_roles()))
+                                    <div class="mpm-10 tab-pane fade show " id="nav-infrastructure" role="tabpanel" aria-labelledby="nav-infrastructure-tab">    
                                         <div class="row">
                                             <div class="col-lg-12 co-sm-12 col-md-12">
                                                 <div class="card">
@@ -267,6 +268,7 @@
                                         </div>
                                                 
                                     </div>
+                                    @endif
                                 </div>
                             </div>
 
