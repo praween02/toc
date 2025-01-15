@@ -79,7 +79,12 @@ class SystemManualDataTable2 extends DataTable
             ])->whereIn('system_manual.type',['4','5'])->where('system_manual.display',0)->where('created_by',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
         }else{
             return $model->newQuery()
-            ->leftjoin('users', 'users.id', '=', 'system_manual.created_by') // Join with the users table
+            // ->leftjoin('vendor_zones', 'vendor_zones.vendor_id', '=','system_manual.created_by')
+            ->leftjoin('user_institutes', 'user_institutes.user_id', '=', 'system_manual.created_by')
+            ->rightjoin('vendor_zone_institutes', 'vendor_zone_institutes.institute_id', '=', 'user_institutes.institute_id')
+            ->rightjoin('vendor_zones', 'vendor_zones.zone_id', '=','vendor_zone_institutes.vendor_zone_id')
+           
+            ->leftjoin('institutes', 'institutes.id', '=', 'user_institutes.institute_id') // Join with the users table
             ->select([
                 'system_manual.id',
                 'system_manual.document_title',
@@ -87,8 +92,8 @@ class SystemManualDataTable2 extends DataTable
                 'system_manual.type',
                 'system_manual.no_of_page',
                 'system_manual.date',
-                'users.name as institute_name', // Select the equipment name from the joined table
-            ])->whereIn('system_manual.type',['4','5'])->where('system_manual.display',0)->orderBy('system_manual.id', 'DESC');
+                'institutes.institute as institute_name', // Select the equipment name from the joined table
+            ])->whereIn('system_manual.type',['4','5'])->where('system_manual.display',0)->where('vendor_zones.vendor_id',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
         }
     }
 
