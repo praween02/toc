@@ -342,17 +342,20 @@ Highcharts.chart('container', {
             data: [
                 {
                     name: 'Delivered',
-                    y: @php echo $response['eq_stats']->delivered @endphp,
+                    // y: @php echo $response['eq_stats']->delivered @endphp,
+                    y: 100,
                     drilldown: 'Delivered'
                 },
                 {
                     name: 'Installed',
-                    y: @php echo $response['eq_stats']->delivered @endphp,
+                    // y: @php echo $response['eq_stats']->delivered @endphp,
+                    y: 100,
                     drilldown: 'Installed'
                 },
                 {
                     name: 'UAT Completed',
-                    y: @php echo $response['eq_stats']->delivered @endphp,
+                    // y: @php echo $response['eq_stats']->delivered @endphp,
+                    y: 100,
                     drilldown: 'Commissioned'
                 }
             ]
