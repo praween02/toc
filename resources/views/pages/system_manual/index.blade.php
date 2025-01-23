@@ -73,7 +73,6 @@
 		            		
 		            		<!-- {{ ucwords(Auth::user()->id) }}  -->
 							
-
 						
 
 		                

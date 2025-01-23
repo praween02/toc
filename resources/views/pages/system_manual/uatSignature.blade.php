@@ -8,7 +8,6 @@
 		    <div class="container">
 		        <div class="card">               
 		            <div class="card-body">
-							
 							@if(in_array('vendor', get_roles()))
 							<div class="row jumbotron box8">
                                 <nav>
