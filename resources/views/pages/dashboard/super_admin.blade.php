@@ -190,15 +190,15 @@ table.project_timeline_tbl tr th,table.project_timeline_tbl tr td{text-align:cen
                                 <!-- end widget-rounded-circle-->
                             </div>
 
-                            <div class="col-md-6 col-xl-4">
-                                <div class="widget-rounded-circle card">
+                            <!-- <div class="col-md-6 col-xl-4">
+                                <div class="widget-rounded-circle card"> -->
                                     <!-- <h6>Project Timeline</h6> -->
-                                    <div class="card-body brder">
+                                    <!-- <div class="card-body brder">
                                         <div id="container6" class="hghtchart"></div>
                                     </div>
-                                </div>
+                                </div> -->
                                 <!-- end widget-rounded-circle-->
-                             </div>
+                             <!-- </div> -->
                                 
                             <div class="col-md-6 col-xl-4">
                                 <div class="widget-rounded-circle card">
@@ -214,11 +214,10 @@ table.project_timeline_tbl tr th,table.project_timeline_tbl tr td{text-align:cen
 
 
 
-                        <div class="row">
+                        <!-- <div class="row">
                             <h3>Institutes's Equipments Report</h3><br />
                              <div class="col-md-12 col-xl-12">
                                 <div class="widget-rounded-circle card">
-                                   <!-- <h6>Lab Status</h6> -->
                                     <div class="card-body brder">
 
                                         <table class="table table-bordered project_timeline_tbl" id="equ_tbl">
@@ -253,7 +252,7 @@ table.project_timeline_tbl tr th,table.project_timeline_tbl tr td{text-align:cen
                                     </div>
                                 </div>
                              </div>
-                        </div>
+                        </div> -->
 
 
                     </div>
@@ -352,7 +351,7 @@ Highcharts.chart('container', {
                     drilldown: 'Installed'
                 },
                 {
-                    name: 'Commissioned',
+                    name: 'UAT Completed',
                     y: @php echo $response['eq_stats']->delivered @endphp,
                     drilldown: 'Commissioned'
                 }
@@ -366,56 +365,56 @@ Highcharts.chart('container', {
 //
 
 
-Highcharts.chart('container6', {
-    chart: {
-        type: 'pie'
-    },
-    title: {
-        text: 'Project Timeline'
-    },
+// Highcharts.chart('container6', {
+//     chart: {
+//         type: 'pie'
+//     },
+//     title: {
+//         text: 'Project Timeline'
+//     },
 
-    plotOptions: {
-        series: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: [{
-                enabled: true,
-                distance: 20
-            }, {
-                enabled: true,
-                distance: -40,
-                format: '{point.percentage:.1f}%',
-                style: {
-                    fontSize: '1.2em',
-                    textOutline: 'none',
-                    opacity: 0.7
-                },
-                filter: {
-                    operator: '>',
-                    property: 'percentage',
-                    value: 10
-                }
-            }]
-        }
-    },
+//     plotOptions: {
+//         series: {
+//             allowPointSelect: true,
+//             cursor: 'pointer',
+//             dataLabels: [{
+//                 enabled: true,
+//                 distance: 20
+//             }, {
+//                 enabled: true,
+//                 distance: -40,
+//                 format: '{point.percentage:.1f}%',
+//                 style: {
+//                     fontSize: '1.2em',
+//                     textOutline: 'none',
+//                     opacity: 0.7
+//                 },
+//                 filter: {
+//                     operator: '>',
+//                     property: 'percentage',
+//                     value: 10
+//                 }
+//             }]
+//         }
+//     },
     
-    series: [
-        {
-            name: 'Project Timeline',
-            colorByPoint: true,
-            data: [
-                {
-                    name: 'Ontime',
-                    y: @php echo $response['pr_on_time_stats'] @endphp
-                },
-                {
-                    name: 'Delayed',
-                    y: @php echo $response['pr_delayed_time_stats']  @endphp
-                }
-            ]
-        }
-    ]
-});
+//     series: [
+//         {
+//             name: 'Project Timeline',
+//             colorByPoint: true,
+//             data: [
+//                 {
+//                     name: 'Ontime',
+//                     y: @php echo $response['pr_on_time_stats'] @endphp
+//                 },
+//                 {
+//                     name: 'Delayed',
+//                     y: @php echo $response['pr_delayed_time_stats']  @endphp
+//                 }
+//             ]
+//         }
+//     ]
+// });
 
 
 
@@ -502,13 +501,16 @@ Highcharts.chart('container12', {
     },
     series: [{
         name: 'Delivered',
-        data: [@php echo implode(',', $response['equipment_delivery_date_arr']) @endphp]
+        // data: [@php echo implode(',', $response['equipment_delivery_date_arr']) @endphp]
+        data: [25,25,25,25,25]
     }, {
         name: 'Installed',
-        data: [@php echo implode(',', $response['equipment_installed_arr']) @endphp]
+        // data: [@php echo implode(',', $response['equipment_installed_arr']) @endphp]
+        data: [25,25,25,25,25]
     }, {
-        name: 'Commissioned',
-        data: [@php echo implode(',', $response['equipment_commissioned_arr']) @endphp]
+        name: 'UAT Completed',
+        // data: [@php echo implode(',', $response['equipment_commissioned_arr']) @endphp]
+        data: [25,25,25,25,25]
     }]
 });
 </script>
