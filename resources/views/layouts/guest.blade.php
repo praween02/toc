@@ -23,6 +23,6 @@
         </div>
 
         @livewireScripts
-        <!--<script type="text/javascript" src="{{ asset('assets/js/login.js?v=1.0') }}"></script>-->
+        <script type="text/javascript" src="{{ asset('assets/js/login.js?v=1.0') }}"></script>
     </body>
 </html>

@@ -37,12 +37,12 @@
                 <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
             </div>
 
-            <!--<div class="mt-4">
+            <div class="mt-4">
                  <x-label for="" value="{{ __('Captcha') }}" />
                  <p class="mt-3 flex" id="captcha_img"></p>
                  <x-input id="captcha" class="block mt-1 w-full mt-2" type="text" name="captcha" autocomplete="off" required />
                  <x-input id="key" class="block mt-1 w-full" type="hidden" name="key" autocomplete="off" />
-            </div>-->
+            </div>
 
 
             <div class="block mt-4">
