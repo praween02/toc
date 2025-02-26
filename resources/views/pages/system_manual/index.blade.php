@@ -71,25 +71,25 @@
 							@endif -->
 
 
-		            		
-		            		<!-- {{ ucwords(Auth::user()->id) }}  -->
-							
-						
 
-		                
-		            </div>
-		        </div>
-		    </div>
-		<!-- End Content-->
-	</div>
+                        <!-- {{ ucwords(Auth::user()->id) }}  -->
 
-</div>
-@endsection
 
-@push('scripts')
-@include('sections.datatable_js')
+                        {{ $dataTable->table(['class' => 'table table-bordered']) }}
 
-<!-- <script>
+                    </div>
+                </div>
+            </div>
+            <!-- End Content-->
+        </div>
+
+    </div>
+    @endsection
+
+    @push('scripts')
+    @include('sections.datatable_js')
+
+    <!-- <script>
 $(document).ready(function() {
     var table = $('#system-manuals-table').DataTable({
         processing: true,
@@ -133,4 +133,4 @@ $(document).ready(function() {
     });
 });
 </script> -->
-@endpush
+    @endpush
