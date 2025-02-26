@@ -5,6 +5,7 @@
 <div class="content-page">
     <div class="content">
         <!-- Start Content-->
+
         <div class="container">
             <div class="card">
                 <div class="card-body">
@@ -64,33 +65,24 @@
                         </div>
                         @endif
                         <!-- @if(in_array('institute', get_roles()))
+
 							<div class="col-md-6 float-left"><h3>{{ __('UAT Document') }}</h3></div>
 		            			<div class="col-md-6 text-end"><a href="{{ route('system_manual.create') }}" class="btn-primary f-14 p-2 mr-3 float-right mb-2 mb-lg-0 mb-md-0"><i class="fa fa-plus"></i> {{ __('UAT Document') }}</a></div>
 							@endif -->
 
 
-                        <!-- {{ ucwords(Auth::user()->id) }}  -->
-                    </div>
+		            		
+		            		<!-- {{ ucwords(Auth::user()->id) }}  -->
+							
+						
 
+		                
+		            </div>
+		        </div>
+		    </div>
+		<!-- End Content-->
+	</div>
 
-
-                    {{ $dataTable->table(['class' => 'table table-bordered']) }}
-                    <!-- <table id="system-manuals-table" class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Type</th>
-                                <th>Document Title</th>
-                                <th>Document File</th>
-                                <th>No Of Page</th>
-                            </tr>
-                        </thead>
-                    </table> -->
-                </div>
-            </div>
-        </div>
-        <!-- End Content-->
-    </div>
 </div>
 @endsection
 
