@@ -33,15 +33,15 @@ h6{color:#fff;padding-left:10px;font-size:14px;letter-spacing:1px}
                             <!-- end widget-rounded-circle-->
                          </div>
                          <!-- end col-->
-                         <div class="col-md-6 col-xl-4">
-                            <div class="widget-rounded-circle card">
+                         <!-- <div class="col-md-6 col-xl-4">
+                            <div class="widget-rounded-circle card"> -->
                                <!-- <h6>Project Timeline</h6> -->
-                               <div class="card-body brder">
+                               <!-- <div class="card-body brder">
                                   <div id="container2" class="hghtchart"></div>
                                </div>
-                            </div>
+                            </div> -->
                             <!-- end widget-rounded-circle-->
-                         </div>
+                         <!-- </div> -->
                          <!-- end col-->
                         <!-- end col-->
                          <div class="col-md-6 col-xl-4">
@@ -59,11 +59,10 @@ h6{color:#fff;padding-left:10px;font-size:14px;letter-spacing:1px}
 
 
 
-		     <div class="row">
+		     <!-- <div class="row">
                             <h3>Institutes's Equipments Report</h3><br />
                              <div class="col-md-12 col-xl-12">
                                 <div class="widget-rounded-circle card">
-                                   <!-- <h6>Lab Status</h6> -->
                                     <div class="card-body brder">
 
                                         <table class="table table-bordered project_timeline_tbl" id="equ_tbl">
@@ -98,7 +97,7 @@ h6{color:#fff;padding-left:10px;font-size:14px;letter-spacing:1px}
                                     </div>
                                 </div>
                              </div>
-                        </div>
+                        </div> -->
 
 
 
