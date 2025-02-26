@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{DashboardController, InstituteController, VendorController, UserController, RoleController, InstituteUserController, EquipmentSupplierController, VendorInstituteController, EquipmentController, CourseController, PocBsnlController, ProjectTimelineController, TicketController, AskExpertDetailController, EquipmentSpecificationController, PocBsnlUserController, ExpertUserControllerr, SixGUserController, ForgotController, TelecomController, TeamController, PaymentController, ParichayController, WorkshopController,SystemManualController};
+use App\Http\Controllers\{DashboardController, InstituteController, VendorController, UserController, RoleController, InstituteUserController, EquipmentSupplierController, VendorInstituteController, EquipmentController, CourseController, PocBsnlController, ProjectTimelineController, TicketController, AskExpertDetailController, EquipmentSpecificationController, PocBsnlUserController, ExpertUserControllerr, SixGUserController, ForgotController, TelecomController, TeamController, PaymentController, ParichayController, WorkshopController, SystemManualController};
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -191,6 +191,7 @@ Route::middleware([
     Route::post('/update-scheduled-equipment-upload', [ProjectTimelineController::class, 'updateScheduledEquipmentUpload'])->name('update-scheduled-equipment-upload');
     /** Start System Manual */
     Route::get('/system-manual', [SystemManualController::class, 'index'])->name('system_manual.index');
+    Route::get('/system-manuals/list', [SystemManualController::class, 'getSystemManuals'])->name('system_manual.list');
     Route::get('/signature-uat', [SystemManualController::class, 'uatSignature'])->name('system_manual.signature-uat');
 
     Route::get('/creare-system-manual', [SystemManualController::class, 'create'])->name('system_manual.create');
@@ -204,5 +205,4 @@ Route::middleware([
     Route::get('/creare-system-delete/{id}', [SystemManualController::class, 'delete'])->name('system_manual.delete');
     Route::post('system_manual/{id?}', [SystemManualController::class, 'store'])->name('system_manual.store');
     Route::get('/system_manual/getSystemManualList', [SystemManualController::class, 'getSystemManualList'])->name('system_manual.getSystemManualList');
-
 });
