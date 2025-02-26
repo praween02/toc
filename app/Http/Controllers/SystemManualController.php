@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use App\Model\EquipmentLabStatus;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
 use Session;
 use Carbon\Carbon;
@@ -115,10 +116,9 @@ class SystemManualController extends Controller
                 return redirect()->route('system_manual.signature-uat')->with('success', 'Data saved successfully!');
             }
             return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
-        }else{
+        } else {
             return redirect()->route('system_manual.index')->with('success', 'Data saved successfully!');
         }
-        
     }
     public function edit($id)
     {
@@ -177,23 +177,22 @@ class SystemManualController extends Controller
         // Query the database with a join to the 'equipments' table
         $roles = get_roles();
         if (in_array('institute', $roles)) {
-        $query = DB::table('system_manual')
-            ->join('equipments', 'system_manual.equipment_id', '=', 'equipments.id' ,'left')
-            ->select(
-                'system_manual.id as id',
-                'equipments.equipment as equipment_name',
-                'system_manual.document_title as document_title',
-                'system_manual.document_description as document_description',
-                'system_manual.document_file as document_file',
-                'system_manual.type as type',
-                'system_manual.no_of_page as no_of_page'
-            )
-            ->where('system_manual.display', '0')
-            ->where('system_manual.created_by', Auth::id()); // Shortcut for Auth::user()->id
-        } else if (in_array('vendor', $roles)) 
-            {
-                $query = DB::table('system_manual')
-                ->join('equipments', 'system_manual.equipment_id', '=', 'equipments.id' ,'left')
+            $query = DB::table('system_manual')
+                ->join('equipments', 'system_manual.equipment_id', '=', 'equipments.id', 'left')
+                ->select(
+                    'system_manual.id as id',
+                    'equipments.equipment as equipment_name',
+                    'system_manual.document_title as document_title',
+                    'system_manual.document_description as document_description',
+                    'system_manual.document_file as document_file',
+                    'system_manual.type as type',
+                    'system_manual.no_of_page as no_of_page'
+                )
+                ->where('system_manual.display', '0')
+                ->where('system_manual.created_by', Auth::id()); // Shortcut for Auth::user()->id
+        } else if (in_array('vendor', $roles)) {
+            $query = DB::table('system_manual')
+                ->join('equipments', 'system_manual.equipment_id', '=', 'equipments.id', 'left')
                 ->select(
                     'system_manual.id as id',
                     'equipments.equipment as equipment_name',
@@ -206,10 +205,9 @@ class SystemManualController extends Controller
                 ->where('system_manual.display', '0')
                 ->where('system_manual.created_by', Auth::id()); // Shortcut for Auth::user()->id
 
-            }else
-            {
-                $query = DB::table('system_manual')
-                ->join('equipments', 'system_manual.equipment_id', '=', 'equipments.id' ,'left')
+        } else {
+            $query = DB::table('system_manual')
+                ->join('equipments', 'system_manual.equipment_id', '=', 'equipments.id', 'left')
                 ->join('users', 'system_manual.created_by', '=', 'users.id', 'left') // Join with the equipment table
                 ->select(
                     'system_manual.id as id',
@@ -222,20 +220,18 @@ class SystemManualController extends Controller
                     'users.name as vendor',
                 )
                 ->where('system_manual.display', '0');
-               
+        }
 
-            }
-    
         // Process data for DataTables
         return datatables()
             ->query($query) // Use the 'query' method for raw DB queries
-            
+
             ->addColumn('vendor', function ($row) {
                 return $row->vendor ?? 'N/A'; // Assuming the `Equipment` model has a `name` field
             })
 
             ->addColumn('type', function ($row) {
-                return $row->type==1?'System Manual':($row->type==2?'Lab Implemention Document':($row->type==3?'UAT Document':'UAT Signature'));
+                return $row->type == 1 ? 'System Manual' : ($row->type == 2 ? 'Lab Implemention Document' : ($row->type == 3 ? 'UAT Document' : 'UAT Signature'));
             })
             ->addColumn('document_file', function ($row) {
                 return $row->document_file
@@ -248,6 +244,35 @@ class SystemManualController extends Controller
             ->rawColumns(['document_file', 'action'])
             ->make(true);
     }
-    
-    
+    public function getSystemManuals(Request $request)
+    {
+        return DataTables::of(SystemManual::query())
+            ->filter(function ($query) use ($request) {
+                if ($request->has('typeFilter') && $request->type != '0') {
+                    $query->where('type', $request->type);
+                }
+            })
+            ->make(true);
+    }
+    // public function getSystemManuals(Request $request)
+    // {
+    //     $query =
+    //         $this->systemManual->newQuery()
+    //         ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
+    //         ->select([
+    //             'system_manual.id',
+    //             'system_manual.document_title',
+    //             'system_manual.document_file',
+    //             'system_manual.type',
+    //             'system_manual.no_of_page',
+    //             'system_manual.date',
+    //             'equipments.equipment as equipment_name', // Select the equipment name from the joined table
+    //         ])->where('system_manual.type', '!=', '4')->where('system_manual.type', '!=', '5')->where('system_manual.display', 0)->orderBy('system_manual.id', 'DESC');
+
+    //     if ($request->has('type') && $request->type != '0') {
+    //         $query->where('type', $request->type);
+    //     }
+
+    //     return DataTables::of($query)->make(true);
+    // }
 }

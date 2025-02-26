@@ -48,7 +48,9 @@ class SystemManualDataTable extends DataTable
             })
             ->addColumn('document_file', function ($row) {
                 if ($row->document_file) {
-                    return '<a href="' . asset('storage/' . $row->document_file) . '" target="_blank">View File</a>';
+                    return '<a href="' . asset('storage/' . $row->document_file) . '" target="_blank">
+                            <span class="badge bg-primary">Doc File</span>
+                        </a><br>';
                 }
                 return 'N/A';
             })
@@ -75,49 +77,39 @@ class SystemManualDataTable extends DataTable
     public function query(SystemManual $model): QueryBuilder
     {
         $roles = get_roles();
+        $query = $model->newQuery()
+            ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id')
+            ->select([
+                'system_manual.id',
+                'system_manual.document_title',
+                'system_manual.document_file',
+                'system_manual.type',
+                'system_manual.no_of_page',
+                'system_manual.date',
+                'equipments.equipment as equipment_name'
+            ])->where('system_manual.display', 0);
 
         if (in_array('institute', $roles)) {
-            return $model->newQuery()
-                ->leftjoin('vendor_zones', 'vendor_zones.vendor_id', '=', 'system_manual.created_by')
-                ->rightjoin('vendor_zone_institutes', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.zone_id')
-                ->rightjoin('user_institutes', 'user_institutes.institute_id', '=', 'vendor_zone_institutes.institute_id')
-                ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
-                ->select([
-                    'system_manual.id',
-                    'system_manual.document_title',
-                    'system_manual.document_file',
-                    'system_manual.type',
-                    'system_manual.no_of_page',
-                    'system_manual.date',
-                    'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-                ])->where('system_manual.type', '!=', '4')->where('system_manual.type', '!=', '5')->where('system_manual.display', 0)->where('user_institutes.user_id', Auth::user()->id)->orderBy('system_manual.id', 'DESC');
-        } else if (in_array('vendor', $roles)) {
-            return $model->newQuery()
-                ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
-                ->select([
-                    'system_manual.id',
-                    'system_manual.document_title',
-                    'system_manual.document_file',
-                    'system_manual.type',
-                    'system_manual.no_of_page',
-                    'system_manual.date',
-                    'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-                ])->where('system_manual.type', '!=', '5')->where('system_manual.display', 0)->where('system_manual.created_by', Auth::user()->id)->orderBy('system_manual.id', 'DESC');
+            $query->leftJoin('vendor_zones', 'vendor_zones.vendor_id', '=', 'system_manual.created_by')
+                ->rightJoin('vendor_zone_institutes', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.zone_id')
+                ->rightJoin('user_institutes', 'user_institutes.institute_id', '=', 'vendor_zone_institutes.institute_id')
+                ->where('system_manual.type', '!=', '4')
+                ->where('system_manual.type', '!=', '5')
+                ->where('user_institutes.user_id', Auth::user()->id);
+        } elseif (in_array('vendor', $roles)) {
+            $query->where('system_manual.type', '!=', '5')
+                ->where('system_manual.created_by', Auth::user()->id);
         } else {
-            return $model->newQuery()
-                ->leftjoin('equipments', 'system_manual.equipment_id', '=', 'equipments.id') // Join with the equipment table
-                ->leftjoin('users', 'system_manual.created_by', '=', 'users.id') // Join with the equipment table
-                ->select([
-                    'system_manual.id',
-                    'system_manual.document_title',
-                    'system_manual.document_file',
-                    'system_manual.type',
-                    'system_manual.no_of_page',
-                    'system_manual.date',
-                    'equipments.equipment as equipment_name', // Select the equipment name from the joined table
-                    'users.name as vendor', // Select the equipment name from the joined table
-                ])->where('system_manual.display', 0)->orderBy('system_manual.id', 'DESC');
+            $query->leftJoin('users', 'system_manual.created_by', '=', 'users.id')
+                ->addSelect(['users.name as vendor']);
         }
+
+        // **Apply Custom Type Filter**
+        if (request()->has('typeFilter') && request()->typeFilter != '0') {
+            $query->where('system_manual.type', request()->typeFilter);
+        }
+
+        return $query->orderBy('system_manual.id', 'DESC');
     }
 
     /**
@@ -179,7 +171,7 @@ class SystemManualDataTable extends DataTable
 
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
                 Column::make('vendor')->name('users.name')->title('Vendor'),
-                Column::make('type')->name('system_manual.type')->title('Type'),
+                Column::make('type')->name('system_manual.type')->title('Type')->searchable(true),
                 Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
                 Column::make('document_file')->title('Document File'),
