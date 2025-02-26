@@ -9,7 +9,12 @@
 		        <div class="card">               
 		            <div class="card-body">
 		            	<div class="row">
-							<div class="col-md-6 float-left"><h3>{{ __('UAT Sign Document') }}</h3></div>
+							@if(in_array('institute', get_roles()))
+							<div class="col-md-6 float-left"><h3>{{ __('Upload Document') }}</h3></div>
+							@endif
+							@if(in_array('vendor', get_roles()))
+							<div class="col-md-6 float-left"><h3>{{ __('Institute Document') }}</h3></div>
+							@endif
                             @if(in_array('institute', get_roles()))
 		            			<div class="col-md-6 text-end">
 								<a href="{{ route('system_manual.create') }}" class="btn-primary f-14 p-2 mr-3 float-right mb-2 mb-lg-0 mb-md-0"><i class="fa fa-plus"></i> {{ __('Document') }}</a>
