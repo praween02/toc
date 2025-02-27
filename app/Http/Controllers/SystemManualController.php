@@ -93,7 +93,7 @@ class SystemManualController extends Controller
         }
         $currentDate = Carbon::now();
         // You can format the date as well
-        $formattedDate = $currentDate->format('Y-m-d');
+        // $formattedDate = $currentDate->format('Y-m-d');
         // Create or update the record
         $systemManual = SystemManual::updateOrCreate(
             ['id' => $id],
@@ -104,7 +104,7 @@ class SystemManualController extends Controller
                 'document_file' => $filePath,
                 'no_of_page' => $validatedData['no_of_page'],
                 'type' => $validatedData['type'],
-                'date' => $request->input('date') ?? $formattedDate,
+                'date' => $request->input('date') ?? '',
                 'created_by' => Auth::user()->id,
             ]
         );
