@@ -167,22 +167,42 @@ class SystemManualDataTable extends DataTable
                     ->addClass('text-center'),
             ];
         } else {
-            return [
+            if (request()->has('typeFilter') && request()->typeFilter != '1' && request()->typeFilter != '2' && request()->typeFilter != '3') {
+                return [
 
-                Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
-                Column::make('vendor')->name('users.name')->title('Vendor'),
-                Column::make('type')->name('system_manual.type')->title('Type')->searchable(true),
-                Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
-                Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
-                Column::make('document_file')->title('Document File'),
-                Column::make('no_of_page')->title('No Of Page'),
-                Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
-                Column::computed('action')
-                    ->exportable(false)
-                    ->printable(false)
-                    ->width(60)
-                    ->addClass('text-center'),
-            ];
+                    Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
+                    Column::make('vendor')->name('users.name')->title('Vendor/Institutes'),
+                    Column::make('type')->name('system_manual.type')->title('Type')->searchable(true),
+                    Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
+                    Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
+                    Column::make('document_file')->title('Document File'),
+                    Column::make('no_of_page')->title('No Of Page'),
+                    Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
+                    Column::computed('action')
+                        ->exportable(false)
+                        ->printable(false)
+                        ->width(60)
+                        ->addClass('text-center'),
+                ];
+            }else{
+                return [
+
+                    Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
+                    Column::make('vendor')->name('users.name')->title('Vendor/Institutes'),
+                    Column::make('type')->name('system_manual.type')->title('Type')->searchable(true),
+                    Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
+                    Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
+                    Column::make('document_file')->title('Document File'),
+                    Column::make('no_of_page')->title('No Of Page'),
+                    // Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
+                    Column::computed('action')
+                        ->exportable(false)
+                        ->printable(false)
+                        ->width(60)
+                        ->addClass('text-center'),
+                ];
+            }
+            
         }
     }
 
