@@ -170,7 +170,7 @@ class SystemManualDataTable extends DataTable
             return [
 
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
-                Column::make('vendor')->name('users.name')->title('Vendor'),
+                Column::make('vendor')->name('users.name')->title('Vendor/Institutes'),
                 Column::make('type')->name('system_manual.type')->title('Type')->searchable(true),
                 Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),

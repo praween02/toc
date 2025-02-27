@@ -43,8 +43,8 @@
                                     <option value="1" <?= ($typeFilter == '1') ? 'selected' : ''; ?>>System
                                         Manual
                                     </option>
-                                    <option value="2" <?= ($typeFilter == '2') ? 'selected' : ''; ?>>UAT
-                                        Document</option>
+                                    <option value="2" <?= ($typeFilter == '2') ? 'selected' : ''; ?>>Lab Implemention
+                                        </option>
                                     <option value="3" <?= ($typeFilter == '3') ? 'selected' : ''; ?>>UAT
                                         Procedure</option>
                                     <option value="4" <?= ($typeFilter == '4') ? 'selected' : ''; ?>>UAT Sign
