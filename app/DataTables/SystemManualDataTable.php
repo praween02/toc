@@ -156,7 +156,7 @@ class SystemManualDataTable extends DataTable
             return [
                 Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
                 Column::make('type')->title('Type')->searchable(true), // Shorter title
-                Column::make('equipment_name')->name('equipments.equipment')->title('equipments.equipment')->searchable(true), // Concise title
+                Column::make('equipment_name')->name('equipments.equipment')->title('Equipments Name')->searchable(true), // Concise title
                 Column::make('document_title')->name('system_manual.document_title')->title('Title')->searchable(true), // Simplified title
                 Column::make('document_file')->title('File'), // Simplified title
                 Column::make('no_of_page')->title('Pages'), // Simplified title
@@ -167,7 +167,7 @@ class SystemManualDataTable extends DataTable
                     ->addClass('text-center'),
             ];
         } else {
-            if (request()->has('typeFilter') && request()->typeFilter != '1' && request()->typeFilter != '2' && request()->typeFilter != '3') {
+            if (request()->typeFilter != '1' && request()->typeFilter != '2' && request()->typeFilter != '3') {
                 return [
 
                     Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
