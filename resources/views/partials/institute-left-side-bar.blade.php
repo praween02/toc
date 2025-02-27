@@ -103,14 +103,13 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                      </ul>
                   </div>
                 </li>
-
                 <li>
-                  <a href="{{ route('system_manual.index') }}"><i class="fe-menu"></i> <span>{{ __('View Document') }}</span></a>
+                  <a href="{{ route('system_manual.index') }}"><i class="fe-menu"></i> <span>{{ __('Document') }}</span></a>
                 </li>
 
-                <li>
+                <!-- <li>
                   <a href="{{ route('system_manual.signature-uat') }}"><i class="fe-list"></i> <span>{{ __('Upload Document') }}</span></a>
-                </li>
+                </li> -->
 
                 <!-- <li>
                   <a href="#"><i class="fe-user"></i> <span>{{ __('app.user_management') }}</span></a>

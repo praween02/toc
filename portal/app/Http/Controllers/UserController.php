@@ -158,7 +158,8 @@ class UserController extends Controller
     /**
      * Permission Edit
      */
-    public function permission($encryptedId = "") {
+    public function permission($encryptedId = null) {
+        
         $user = $this->checkEncryptedId($encryptedId);
         $permission = unserialize($user->permission->permission);
         return view('pages.user.permission', compact('permission', 'encryptedId'));
