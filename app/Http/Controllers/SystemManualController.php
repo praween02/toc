@@ -104,7 +104,7 @@ class SystemManualController extends Controller
                 'document_file' => $filePath,
                 'no_of_page' => $validatedData['no_of_page'],
                 'type' => $validatedData['type'],
-                'date' => $request->input('date') ?? '',
+                'date' => $request->input('date',null),
                 'created_by' => Auth::user()->id,
             ]
         );

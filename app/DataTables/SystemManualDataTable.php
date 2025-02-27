@@ -167,7 +167,7 @@ class SystemManualDataTable extends DataTable
                     ->addClass('text-center'),
             ];
         } else {
-            if (request()->has('typeFilter') && request()->typeFilter != '1' && request()->typeFilter != '2' && request()->typeFilter != '3') {
+            if (request()->typeFilter != '1' && request()->typeFilter != '2' && request()->typeFilter != '3') {
                 return [
 
                     Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
