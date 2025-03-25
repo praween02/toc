@@ -44,6 +44,9 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                   <a href="{{ route('equipments.index') }}"><i class="fe-box"></i> <span>{{ __('app.equipments') }}</span></a>
                 </li>
 
+                <li>
+                  <a href="{{ route('equipment-list.index') }}"><i class="fe-list"></i> <span>{{ __('app.list_of_equipments') }}</span></a>
+                </li>
 
                 <li>
                   <a href="{{ route('institutes.index') }}"><i class="fe-book"></i> <span>{{ __('app.institutes') }}</span></a>
