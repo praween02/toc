@@ -12,6 +12,7 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 use DB;
+use Illuminate\Support\Facades\Log;
 
 class InstitutesDataTable extends DataTable
 {
@@ -45,30 +46,50 @@ class InstitutesDataTable extends DataTable
     /**
      * Get the query source of dataTable.
      */
-    public function query(Institute $model): QueryBuilder
-    {
-        if (in_array('vendor', get_roles())) {
-            return Institute::select(['institutes.id', 'institutes.institute'])
-                    ->rightJoin('vendor_zone_institutes', 'institutes.id', '=', 'vendor_zone_institutes.institute_id')
-                    ->join('vendor_zones', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.id')
-                    ->where('vendor_zones.vendor_id', \Auth::user()->id);
-        } else if (in_array('lsa', get_roles())) {
-            return Institute::select(['institutes.id', 'institutes.institute'])
-                    ->rightJoin('lsa_institute', 'institutes.id', '=', 'lsa_institute.institute_id')
-                    ->where('lsa_institute.user_id', \Auth::user()->id)
-                    ->orderBy('institutes.institute', 'ASC');
-        } else if (in_array('nodal', get_roles())) {
-            $lsa_users = DB::table('nodal_lsas')->select('lsa_id')->where('nodal_user_id', current_user_id())->get()->toArray();
-            
-            $lsa_ids = array_column($lsa_users, 'lsa_id');
-            return Institute::select(['institutes.id', 'institutes.institute'])
-                    ->rightJoin('lsa_institute', 'institutes.id', '=', 'lsa_institute.institute_id')
-                    ->whereIn('lsa_institute.user_id', $lsa_ids)
-                    ->orderBy('institutes.institute', 'ASC');
-        } else {
-            return $model->newQuery();
-        }
-    }
+
+
+     public function query(Institute $model): QueryBuilder
+     {
+         $search = request()->get('search')['value'] ?? null; 
+         Log::info('Search Parameter:', ['search' => $search]);  
+     
+         if (in_array('vendor', get_roles())) {
+             $query = Institute::select(['institutes.id', 'institutes.institute'])
+                 ->rightJoin('vendor_zone_institutes', 'institutes.id', '=', 'vendor_zone_institutes.institute_id')
+                 ->join('vendor_zones', 'vendor_zone_institutes.vendor_zone_id', '=', 'vendor_zones.id')
+                 ->where('vendor_zones.vendor_id', \Auth::user()->id);
+     
+         } elseif (in_array('lsa', get_roles())) {
+             $query = Institute::select(['institutes.id', 'institutes.institute'])
+                 ->rightJoin('lsa_institute', 'institutes.id', '=', 'lsa_institute.institute_id')
+                 ->where('lsa_institute.user_id', \Auth::user()->id)
+                 ->orderBy('institutes.institute', 'ASC');
+     
+         } elseif (in_array('nodal', get_roles())) {
+             $lsa_users = DB::table('nodal_lsas')
+                 ->select('lsa_id')
+                 ->where('nodal_user_id', current_user_id())
+                 ->pluck('lsa_id')
+                 ->toArray();
+     
+             $query = Institute::select(['institutes.id', 'institutes.institute'])
+                 ->rightJoin('lsa_institute', 'institutes.id', '=', 'lsa_institute.institute_id')
+                 ->whereIn('lsa_institute.user_id', $lsa_users)
+                 ->orderBy('institutes.institute', 'ASC');
+     
+         } else {
+             $query = $model->newQuery();
+         }
+     
+         if (!empty($search)) {
+             $query->where('institutes.institute', 'LIKE', "%{$search}%");
+         }
+     
+         return $query;
+     }
+     
+     
+    
 
     /**
      * Optional method if you want to use the html builder.
