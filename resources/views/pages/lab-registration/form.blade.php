@@ -28,7 +28,7 @@
             background: white;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 10px rgba(45, 22, 22, 0.1);
             width: 100%;
             max-width: 600px;
         }
@@ -180,17 +180,17 @@
                     <hr>
                     <div class="row">
                         <div class="col-12 col-md-4 mb-4">
-                            <label for="person_name" class="form-label required">Person Name</label>
+                            <label for="person_name" class="form-label required">Person Name<span class="required">*</span></label>
                             <input type="text" class="form-control @error('person_name') is-invalid @enderror"
                                 name="person_name" id="person_name" rows="3" placeholder="Enter Person Name"
                                 value="{{ old('person_name') }}" required>
                         </div>
                         <div class="col-12 col-md-4 mb-4">
-                            <label for="qualification" class="form-label required">Qualification</label>
+                            <label for="qualification" class="form-label required">Qualification<span class="required">*</span></label>
                             <select name="qualification"
                                 class="form-select @error('qualification') is-invalid @enderror" id="qualification"
                                 required>
-                                <option value="">Choose Qualification</option>
+                                <option value="">Choose Qualification<span class="required">*</span></option>
                                 <option value="1" {{ old('qualification') == '1' ? 'selected' : '' }}>UG</option>
                                 <option value="2" {{ old('qualification') == '2' ? 'selected' : '' }}>PG</option>
                                 <option value="B.Tech" {{ old('qualification') == 'B.Tech' ? 'selected' : '' }}>B.Tech
@@ -204,13 +204,13 @@
                             </select>
                         </div>
                         <div class="col-12 col-md-4 mb-4" id="designation-div">
-                            <label for="designation" class="form-label required">Designation</label>
+                            <label for="designation" class="form-label required">Designation<span class="required">*</span></label>
                             <input type="text" class="form-control @error('designation') is-invalid @enderror"
                                 name="designation" id="designation" rows="3" placeholder="Enter your Designation"
                                 value="{{ old('designation') }}" required>
                         </div>
                         <div class="col-12 col-md-4 mb-4" id="institute-div">
-                            <label for="institute_id" class="form-label required">Institute / Company</label>
+                            <label for="institute_id" class="form-label required">Institute / Company<span class="required">*</span></label>
                             <select name="institute_id" id="institute_id"
                                 class="form-select @error('institute_id') is-invalid @enderror" required>
                                 <option value="">Select Institute</option>
@@ -227,26 +227,26 @@
                         <div class="col-12 col-md-4 mb-4" id="other_institute_div"
                             style="{{ old('institute_id') == 'other' ? '' : 'display:none;' }}">
                             <label for="institute_company" class="form-label required">Specify Institute /
-                                Company</label>
+                                Company<span class="required">*</span></label>
                             <input type="text"
                                 class="form-control @error('institute_company') is-invalid @enderror"
                                 name="institute_company" id="institute_company" rows="3"
                                 placeholder="Enter Institute/Company name" value="{{ old('institute_company') }}">
                         </div>
                         <div class="col-12 col-md-4 mb-4" id="pan-card-div" style="display:none;">
-                            <label for="pan_number" class="form-label required">Pan Number / Other Govt Id</label>
+                            <label for="pan_number" class="form-label required">Pan Number / Other Govt Id<span class="required">*</span></label>
                             <input type="text" class="form-control @error('pan_number') is-invalid @enderror"
                                 maxlength="18" name="pan_number" id="pan_number" rows="3"
                                 placeholder="Enter PAN Number / Other Govt Id" value="{{ old('pan_number') }}">
                         </div>
                         <div class="col-md-8 mb-4">
-                            <label for="address" class="form-label required">Address</label>
+                            <label for="address" class="form-label required">Address<span class="required">*</span></label>
                             <textarea class="form-control @error('address') is-invalid @enderror" name="address" id="address" rows="1"
                                 placeholder="Enter Address" required>{{ old('address') }}</textarea>
                         </div>
                     </div>
                     <div class="col-md-8 mb-4">
-                        <label for="reason_to_join" class="form-label required">Reason to Join</label>
+                        <label for="reason_to_join" class="form-label required">Reason to Join<span class="required">*</span></label>
                         <textarea class="form-control @error('reason_to_join') is-invalid @enderror" name="reason_to_join"
                             id="reason_to_join" rows="3" placeholder="Enter your reason for joining" required>{{ old('reason_to_join') }}</textarea>
                     </div>
@@ -258,7 +258,7 @@
                     <hr>
                     <div class="row">
                         <div class="col-12 col-md-4 mb-4">
-                            <label for="mobile_no" class="form-label required">Mobile No.</label>
+                            <label for="mobile_no" class="form-label required">Mobile No.<span class="required">*</span></label>
                             <input type="text" class="form-control @error('mobile_no') is-invalid @enderror"
                                 name="mobile_no" id="mobile_no" rows="3" placeholder="Enter Mobile no."
                                 value="{{ old('mobile_no') }}" maxlength="10" onkeypress="allowNumbersOnly(event)"
@@ -326,17 +326,17 @@
                                 </div>
                             </div>
                             <div class="col-sm-6 col-md-4">
-                                <div class="form-group">
+                            <div class="form-group">
                                     <input type="text" name="captcha" id="captcha"
                                         class="form-control @error('captcha') is-invalid @enderror"
                                         placeholder="Enter captcha" required>
+                                    <span id="captchaError" style="color: red; display: none;">Please enter the correct CAPTCHA</span>
                                 </div>
-                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3 mt-8">
-                        <button type="submit" class="btn btn-primary" id="btnSubmit">Submit</button>
-                    </div>
+
+                        <div class="col-md-3 mt-8">
+                            <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+                        </div>
                 </form>
 
             </div>
@@ -410,6 +410,20 @@
             if (code > 31 && (code < 48 || code > 57)) {
                 e.preventDefault();
             }
+        }
+        document.getElementById("submitBtn").addEventListener("click", function(event) {
+        let captchaValue = document.getElementById("captcha").value.trim();
+        if (captchaValue === "") {
+            event.preventDefault(); // Stop form submission
+            document.getElementById("captchaError").style.display = "block";
+        } else {
+            document.getElementById("captchaError").style.display = "none";
+        }
+    });
+    </script>
+    <script>
+        function enableSubmit() {
+            document.getElementById("submitBtn").disabled = false;
         }
     </script>
 </body>
