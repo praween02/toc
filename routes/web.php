@@ -213,3 +213,4 @@ Route::middleware([
 Route::get('lab-registration', [LabRegistrationController::class, 'showForm'])->name('lab.registration');
 Route::post('lab-registration', [LabRegistrationController::class, 'store'])->name('lab.registration.store');
 Route::get('lab-registration/success', [LabRegistrationController::class, 'success'])->name('lab.registration.success');
+Route::get('/get-subcategories', [LabRegistrationController::class, 'getSubcategories']);
