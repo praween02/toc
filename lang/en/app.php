@@ -41,6 +41,8 @@ return [
     'documentation' => 'Documentation',
     'project_timeline_status' => 'Project Timeline/Status',
     'tickets_complaints' => 'Tickets / Complaints',
+    'lab_registration_data' => 'Lab Registrations Data',
+
 
     'lab_status' => 'Lab Status',
     'equipment_supplier' => 'Equipment Supplier',

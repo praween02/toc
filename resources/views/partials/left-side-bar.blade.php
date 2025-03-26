@@ -111,7 +111,7 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                 </li>
 
                 <li>
-                  <a href="{{ route('lab.registration.data') }}"><i class="fe-menu"></i> <span>{{ __('app.tickets_complaints') }}</span></a>
+                  <a href="{{ route('lab.registration.data') }}"><i class="fe-menu"></i> <span>{{ __('app.lab_registration_data') }}</span></a>
                 </li>
 
 
