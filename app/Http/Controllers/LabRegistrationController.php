@@ -48,7 +48,7 @@ class LabRegistrationController extends Controller
     {
         // Get all institutes for the dropdown
         $institutes = Institute::all();
-        return view('lab-registration.form', compact('institutes'));
+        return view('pages.lab-registration.form', compact('institutes'));
     }
 
     /**
