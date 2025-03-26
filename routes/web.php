@@ -214,3 +214,8 @@ Route::get('lab-registration', [LabRegistrationController::class, 'showForm'])->
 Route::post('lab-registration', [LabRegistrationController::class, 'store'])->name('lab.registration.store');
 Route::get('lab-registration/success', [LabRegistrationController::class, 'success'])->name('lab.registration.success');
 Route::get('/get-subcategories', [LabRegistrationController::class, 'getSubcategories']);
+Route::get('lab-registration-data', [LabRegistrationController::class, 'index'])->name('lab.registration.data');
+
+Route::get('/lab-registration/{id}', [LabRegistrationController::class, 'show'])->name('lab-registration.show');
+Route::get('/lab-registration/{id}/edit', [LabRegistrationController::class, 'edit'])->name('lab-registration.edit');
+Route::put('/lab-registration/{id}', [LabRegistrationController::class, 'update'])->name('lab-registration.update');

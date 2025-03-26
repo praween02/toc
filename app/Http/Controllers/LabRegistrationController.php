@@ -7,6 +7,7 @@ use App\Models\Institute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\DataTables\LabRegistrationDataTable;
 
 class LabRegistrationController extends Controller
 {
@@ -15,19 +16,14 @@ class LabRegistrationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
-    {
-        $query = LabRegistration::query();
+    public function index(LabRegistrationDataTable $dataTable)
+{
+    abort_if((count(array_intersect(['institute', 'vendor', 'super_admin'], get_roles())) ? 0 : 1), 403, __('app.permission_denied'));
 
-        // Filter by status if provided
-        if ($request->has('status') && !empty($request->status)) {
-            $query->where('status', $request->status);
-        }
+    return $dataTable->render('pages.lab-registration.index');
+}
 
-        $registrations = $query->latest()->paginate(10);
 
-        return view('pages.lab-registrations.index', compact('registrations'));
-    }
 
     /**
      * Show the form for creating a new resource.
