@@ -1,5 +1,5 @@
-
 node_modules
+.env
 
 # Ignore cache, logs, and views
 storage/framework/cache/*
