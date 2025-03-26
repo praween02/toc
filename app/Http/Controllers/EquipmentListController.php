@@ -18,18 +18,31 @@ class EquipmentListController extends Controller
         // Get all institutes for the dropdown
         $institutes = Institute::all();
         
-        // Query builder for equipment list
+        // Start building the query
         $query = EquipmentList::query();
         
-        // Apply institute filter if selected
-        if ($request->has('institute_id') && !empty($request->institute_id)) {
-            $query->where('institute_id', $request->institute_id);
+        // Check if user is an institute
+        $userIsInstitute = in_array('institute', get_roles()); // Assuming this is how you check roles
+        $instituteId = null;
+        
+        if ($userIsInstitute) {
+            // Get the institute ID of the logged-in user
+            $instituteId = auth()->user()->institute_id; // Adjust this based on your user-institute relationship
+            
+            // Automatically filter by the user's institute
+            $query->where('institute_id', $instituteId);
+        } 
+        // If not an institute user but filter is selected
+        elseif ($request->has('institute_id') && !empty($request->institute_id)) {
+            $instituteId = $request->institute_id;
+            $query->where('institute_id', $instituteId);
         }
         
         // Get the filtered results
         $equipmentList = $query->get();
         
-        return view('pages.equipment-list.index', ["institutes" => $institutes, "equipmentList" => $equipmentList]);
+        // Pass both the list of institutes and the selected institute ID to the view
+        return view('pages.equipment-list.index', compact('equipmentList', 'institutes', 'instituteId', 'userIsInstitute'));
     }
 
     /**

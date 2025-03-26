@@ -43,7 +43,7 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                 <li>
                   <a href="{{ route('equipments.index') }}"><i class="fe-box"></i> <span>{{ __('app.equipments') }}</span></a>
                 </li>
-
+                
                 <li>
                   <a href="{{ route('equipment-list.index') }}"><i class="fe-list"></i> <span>{{ __('app.list_of_equipments') }}</span></a>
                 </li>
@@ -81,8 +81,8 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                 <li>
                   <a href="{{ route('admin.projects_timeline') }}"><i class="fe-menu"></i> <span>{{ __('app.project_timeline') }}</span></a>
                 </li>
-
-		<li>
+                
+		            <li>
                   <a href="{{ route('teams.index') }}"><i class="fe-users"></i> <span>{{ __('app.committee') }}</span></a>
                 </li>
 
@@ -113,6 +113,20 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
           <a href="{{ route('system_manual.index') }}"><i class="fe-list"></i> <span>{{ __("Document") }}</span></a>
         </li>
 
+                @php
+                    $userRoles = get_roles(); // Get the current user's roles
+                    $hasInstitute = in_array('institute', $userRoles);
+                    $hasSuperAdmin = in_array('super_admin', $userRoles);
+                    // You can use dd($userRoles) here to check what roles are actually returned
+                @endphp
+
+                {{-- Equipment List menu item with roles displayed as comment for debugging --}}
+                {{-- Roles: {{ implode(', ', $userRoles) }} --}}
+                @if($hasSuperAdmin || $hasInstitute || in_array('admin_view', $userRoles))
+                <li>
+                  <a href="{{ route('equipment-list.index') }}"><i class="fe-list"></i> <span>{{ __('app.list_of_equipments') }}</span></a>
+                </li>
+                @endif
 
 		@endif
 

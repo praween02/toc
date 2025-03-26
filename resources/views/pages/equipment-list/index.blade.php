@@ -26,18 +26,23 @@
                             <div class="col-md-4">
                                 <form action="{{ route('equipment-list.index') }}" method="GET">
                                     <div class="input-group">
-                                        <select name="institute_id" class="form-control" id="institute-filter">
+                                        <select name="institute_id" class="form-control" id="institute-filter" {{ isset($userIsInstitute) && $userIsInstitute ? 'disabled' : '' }}>
                                             <option value="">All Institutes</option>
                                             @foreach($institutes as $institute)
-                                                <option value="{{ $institute->id }}" {{ request('institute_id') == $institute->id ? 'selected' : '' }}>
+                                                <option value="{{ $institute->id }}" 
+                                                    {{ (isset($instituteId) && $instituteId == $institute->id) ? 'selected' : '' }}>
                                                     {{ $institute->institute }}
                                                 </option>
                                             @endforeach
                                         </select>
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" type="submit">Filter</button>
+                                            <button class="btn btn-primary" type="submit" {{ isset($userIsInstitute) && $userIsInstitute ? 'disabled' : '' }}>Filter</button>
                                         </div>
                                     </div>
+                                    
+                                    @if(isset($userIsInstitute) && $userIsInstitute)
+                                        <small class="text-muted">You are viewing equipment for your institute only.</small>
+                                    @endif
                                 </form>
                             </div>
                         </div>
@@ -63,7 +68,7 @@
                                         <td>{{ $equipment->model_no }}</td>
                                         <td>{{ $equipment->date }}</td>
                                         <td>{{ $equipment->running_time }}</td>
-                                        <td>{{ $equipment->institute->name ?? 'N/A' }}</td>
+                                        <td>{{ $equipment->institute->institute ?? 'N/A' }}</td>
                                         <td>
                                             <form action="{{ route('equipment-list.destroy', $equipment->id) }}" method="POST">
                                                 <a class="btn btn-info btn-sm" href="{{ route('equipment-list.show', $equipment->id) }}">
@@ -85,20 +90,22 @@
                             </table>
                         </div>
                     </div>
-                    </div>
+                </div>
             </div>
-            </div>
+        </div>
     </div>
-
+</div>
 @endsection
 
 @section('scripts')
 <script>
     $(document).ready(function() {
-        // Optional: Add auto-submit when dropdown changes
-        $('#institute-filter').on('change', function() {
-            $(this).closest('form').submit();
-        });
+        // Only add auto-submit for non-institute users
+        @if(!isset($userIsInstitute) || !$userIsInstitute)
+            $('#institute-filter').on('change', function() {
+                $(this).closest('form').submit();
+            });
+        @endif
     });
 </script>
 @endsection
