@@ -18,5 +18,11 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        // Add your Equipment List seeder to the call list
+        $this->call([
+            // Other seeders might be here
+            EquipmentListSeeder::class,
+        ]);
     }
 }
