@@ -117,7 +117,7 @@ class LabRegistrationController extends Controller
     public function success(Request $request)
     {
         $email = $request->query('email', 'your email address');
-        return view('lab-registration.success', compact('email'));
+        return view('pages.lab-registration.success', compact('email'));
     }
 
     /**
