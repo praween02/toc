@@ -6,8 +6,10 @@ use App\Models\LabRegistration;
 use App\Models\Institute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\DataTables\LabRegistrationDataTable;
+use App\Mail\RejectedEmail;
 
 class LabRegistrationController extends Controller
 {
@@ -17,13 +19,11 @@ class LabRegistrationController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(LabRegistrationDataTable $dataTable)
-{
-    abort_if((count(array_intersect(['institute', 'vendor', 'super_admin'], get_roles())) ? 0 : 1), 403, __('app.permission_denied'));
+    {
+        abort_if((count(array_intersect(['institute', 'vendor', 'super_admin'], get_roles())) ? 0 : 1), 403, __('app.permission_denied'));
 
-    return $dataTable->render('pages.lab-registration.index');
-}
-
-
+        return $dataTable->render('pages.lab-registration.index');
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -225,7 +225,37 @@ class LabRegistrationController extends Controller
         return redirect()->back()->with('success', 'Status updated successfully.');
     }
 
-    /**sub categories */
+    /**
+     * Reject a registration.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function reject(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:lab_registrations,id',
+            'reason' => 'required|string|max:255',
+        ]);
+    
+        $registration = LabRegistration::findOrFail($request->id);
+        $registration->status = 'rejected';
+        $registration->reject_reason = $request->reason;
+        $registration->save();
+        // send email to the applicant
+        // Mail::to($registration->email_id)->send(new RejectedEmail($registration));
+    
+        return response()->json(['success' => true, 'message' => 'Registration rejected successfully.']);
+    }
+    
+
+    /**
+     * sub categories
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function getSubcategories(Request $request)
     {
         $category = $request->category;

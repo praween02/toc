@@ -45,10 +45,6 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                 </li>
                 
                 <li>
-                  <a href="{{ route('equipment-list.index') }}"><i class="fe-list"></i> <span>{{ __('app.list_of_equipments') }}</span></a>
-                </li>
-
-                <li>
                   <a href="{{ route('institutes.index') }}"><i class="fe-book"></i> <span>{{ __('app.institutes') }}</span></a>
                 </li>
 
@@ -106,33 +102,19 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                   <a href="{{ route('payments.index') }}"><i class="fe-list"></i> <span>{{ __("Payment") }}</span></a>
                 </li>
 
-		<li>
+		            <li>
                   <a href="{{ route('tickets.index') }}"><i class="fe-menu"></i> <span>{{ __('app.tickets_complaints') }}</span></a>
                 </li>
 
                 <li>
-                  <a href="{{ route('lab.registration.data') }}"><i class="fe-menu"></i> <span>{{ __('app.lab_registration_data') }}</span></a>
+                  <a href="{{ route('equipment-list.index') }}"><i class="fe-list"></i> <span>{{ __('app.list_of_equipments') }}</span></a>
                 </li>
 
+                
 
                 <li>
           <a href="{{ route('system_manual.index') }}"><i class="fe-list"></i> <span>{{ __("Document") }}</span></a>
         </li>
-
-                @php
-                    $userRoles = get_roles(); // Get the current user's roles
-                    $hasInstitute = in_array('institute', $userRoles);
-                    $hasSuperAdmin = in_array('super_admin', $userRoles);
-                    // You can use dd($userRoles) here to check what roles are actually returned
-                @endphp
-
-                {{-- Equipment List menu item with roles displayed as comment for debugging --}}
-                {{-- Roles: {{ implode(', ', $userRoles) }} --}}
-                @if($hasSuperAdmin || $hasInstitute || in_array('admin_view', $userRoles))
-                <li>
-                  <a href="{{ route('equipment-list.index') }}"><i class="fe-list"></i> <span>{{ __('app.list_of_equipments') }}</span></a>
-                </li>
-                @endif
 
 		@endif
 

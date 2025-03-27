@@ -191,8 +191,8 @@
                                 class="form-select @error('qualification') is-invalid @enderror" id="qualification"
                                 required>
                                 <option value="">Choose Qualification<span class="required">*</span></option>
-                                <option value="1" {{ old('qualification') == '1' ? 'selected' : '' }}>UG</option>
-                                <option value="2" {{ old('qualification') == '2' ? 'selected' : '' }}>PG</option>
+                                <option value="UG" {{ old('qualification') == 'UG' ? 'selected' : '' }}>UG</option>
+                                <option value="PG" {{ old('qualification') == 'PG' ? 'selected' : '' }}>PG</option>
                                 <option value="B.Tech" {{ old('qualification') == 'B.Tech' ? 'selected' : '' }}>B.Tech
                                 </option>
                                 <option value="M.Tech" {{ old('qualification') == 'M.Tech' ? 'selected' : '' }}>M.Tech

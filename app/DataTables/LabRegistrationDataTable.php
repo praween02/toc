@@ -62,9 +62,8 @@ class LabRegistrationDataTable extends DataTable
         //     return date('D, j M Y', strtotime($row->created_at));
         // })
         ->addColumn('action', function ($row) {
-            $action = '<a href="' . route('lab-registration.show', [$row->id]) . '" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i></a>';
-            $action .= '&nbsp;<a href="' . route('lab-registration.edit', [$row->id]) . '" class="btn btn-xs btn-warning"><i class="fa fa-edit"></i></a>';
-            $action .= '&nbsp;<button onclick="approve(' . $row->id . ')" class="btn btn-xs btn-success"><i class="fa fa-check"></i></button>';
+            // $action = '<a href="' . route('lab-registration.show', [$row->id]) . '" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i></a>';
+            $action = '&nbsp;<button onclick="approve(' . $row->id . ')" class="btn btn-xs btn-success"><i class="fa fa-check"></i></button>';
             $action .= '&nbsp;<button onclick="rejectWithReason(' . $row->id . ')" class="btn btn-xs btn-danger"><i class="fa fa-times"></i></button>';
             return $action;
         })
@@ -78,7 +77,14 @@ class LabRegistrationDataTable extends DataTable
     public function query(LabRegistration $model): QueryBuilder
     {
         $current_user_id = current_user_id();
-        return $model->newQuery()->where('institute_id', $current_user_id)->orderBy('id', 'DESC');
+        $roles = get_roles();
+        if (in_array('institute', $roles)) {
+            $email_id = DB::table('users')->where('id', $current_user_id)->first()->email;
+            $institute_id = DB::table('institutes')->where('email', $email_id)->first()->id;
+            return $model->select([ 'lab_registrations.*'])->where('institute_id', $institute_id)->orderBy('id', 'DESC');
+        }
+       
+        return $model->newQuery()->orderBy('id', 'DESC');
     }
 
     /**
@@ -118,7 +124,7 @@ class LabRegistrationDataTable extends DataTable
         // Column::make('address')->title('Address')->orderable(false),
         Column::make('mobile_no')->title('Mobile No')->orderable(false),
         Column::make('email_id')->title('Email ID')->orderable(false),
-        Column::make('reason')->title('Reason')->orderable(false),
+        Column::make('reason')->title('Reason to Join')->orderable(false),
         Column::make('status')->title('Status')->orderable(false),
         // Column::make('created_at')->title('Registered On')->orderable(true),
         Column::computed('action')
