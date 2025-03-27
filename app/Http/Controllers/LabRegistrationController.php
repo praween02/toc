@@ -6,7 +6,10 @@ use App\Models\LabRegistration;
 use App\Models\Institute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\DataTables\LabRegistrationDataTable;
+use App\Mail\RejectedEmail;
 
 class LabRegistrationController extends Controller
 {
@@ -15,18 +18,11 @@ class LabRegistrationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(LabRegistrationDataTable $dataTable)
     {
-        $query = LabRegistration::query();
+        abort_if((count(array_intersect(['institute', 'vendor', 'super_admin'], get_roles())) ? 0 : 1), 403, __('app.permission_denied'));
 
-        // Filter by status if provided
-        if ($request->has('status') && !empty($request->status)) {
-            $query->where('status', $request->status);
-        }
-
-        $registrations = $query->latest()->paginate(10);
-
-        return view('pages.lab-registrations.index', compact('registrations'));
+        return $dataTable->render('pages.lab-registration.index');
     }
 
     /**
@@ -70,7 +66,7 @@ class LabRegistrationController extends Controller
             'address' => 'required|string',
             'mobile_no' => 'required|string|max:15',
             'email_id' => 'required|string|email|max:255|unique:lab_registrations',
-            'reason' => 'nullable|string',
+            'reason_to_join' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -86,7 +82,7 @@ class LabRegistrationController extends Controller
         $registration->person_name = $request->person_name;
         $registration->qualification = $request->qualification;
         $registration->designation = $request->designation;
-        
+
         // Handle institute selection or custom entry
         if ($request->institute_id == 'other') {
             $registration->institute_company = $request->institute_company;
@@ -94,13 +90,13 @@ class LabRegistrationController extends Controller
         } else {
             $registration->institute_id = $request->institute_id;
             $institute = Institute::find($request->institute_id);
-            $registration->institute_company = $institute ? $institute->name : null;
+            $registration->institute_company = $institute ? $institute->institute : null;
         }
-        
+
         $registration->address = $request->address;
         $registration->mobile_no = $request->mobile_no;
         $registration->email_id = $request->email_id;
-        $registration->reason = $request->reason;
+        $registration->reason = $request->reason_to_join;
         $registration->status = 'pending';
         $registration->save();
 
@@ -117,7 +113,7 @@ class LabRegistrationController extends Controller
     public function success(Request $request)
     {
         $email = $request->query('email', 'your email address');
-        return view('lab-registration.success', compact('email'));
+        return view('pages.lab-registration.success', compact('email'));
     }
 
     /**
@@ -161,7 +157,7 @@ class LabRegistrationController extends Controller
             'address' => 'required|string',
             'mobile_no' => 'required|string|max:15',
             'email_id' => 'required|string|email|max:255|unique:lab_registrations,email_id,' . $labRegistration->id,
-            'reason' => 'nullable|string',
+            'reason_to_join' => 'nullable|string',
             'status' => 'required|in:pending,approved,rejected',
         ]);
 
@@ -184,7 +180,7 @@ class LabRegistrationController extends Controller
         if ($request->filled('password')) {
             $labRegistration->password = Hash::make($request->password);
         }
-        $labRegistration->reason = $request->reason;
+        $labRegistration->reason = $request->reason_to_join;
         $labRegistration->status = $request->status;
         $labRegistration->save();
 
@@ -228,4 +224,53 @@ class LabRegistrationController extends Controller
 
         return redirect()->back()->with('success', 'Status updated successfully.');
     }
+
+    /**
+     * Reject a registration.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function reject(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:lab_registrations,id',
+            'reason' => 'required|string|max:255',
+        ]);
+    
+        $registration = LabRegistration::findOrFail($request->id);
+        $registration->status = 'rejected';
+        $registration->reject_reason = $request->reason;
+        $registration->save();
+        // send email to the applicant
+        // Mail::to($registration->email_id)->send(new RejectedEmail($registration));
+    
+        return response()->json(['success' => true, 'message' => 'Registration rejected successfully.']);
+    }
+    
+
+    /**
+     * sub categories
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function getSubcategories(Request $request)
+    {
+        $category = $request->category;
+
+        $subcategories = [];
+
+        if ($category == 'Academia') {
+            $subcategories = ['Student', 'Faculty', 'Other'];
+        } elseif ($category == 'Industry') {
+            $subcategories = ['MSME', 'Startup'];
+        } elseif ($category == 'R&D') {
+            $subcategories = []; // No subcategories
+        }
+
+        return response()->json($subcategories);
+    }
 }
+

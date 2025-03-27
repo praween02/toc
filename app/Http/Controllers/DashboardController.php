@@ -49,7 +49,6 @@ class DashboardController extends Controller
 
 	$response = '';
         $roles = get_roles();
-
 	if (in_array('lsa', $roles) OR in_array('nodal', $roles)) {
             return redirect()->route('institutes.index'); 
         }

@@ -88,7 +88,9 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
 		<li>
                   <a href="{{ route('tickets.index') }}"><i class="fe-menu"></i> <span>{{ __('app.tickets_complaints') }}</span></a>
                 </li>
-
+                <li>
+                  <a href="{{ route('lab.registration.index') }}"><i class="fe-list"></i> <span>{{ __('app.lab_registration_data') }}</span></a>
+                </li>
 
                 <li>
                   <a href="#admin_user" data-bs-toggle="collapse"><i class="fe-user-plus"></i><span> {{ __('app.administration') }} </span><span class="menu-arrow"></span></a>

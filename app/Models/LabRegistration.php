@@ -26,7 +26,8 @@ class LabRegistration extends Model
         'mobile_no',
         'email_id',
         'reason',
-        'status'
+        'status',
+        'reject_reason'
     ];
 
     /**

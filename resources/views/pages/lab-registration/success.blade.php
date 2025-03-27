@@ -29,10 +29,10 @@
             <div class="col-md-8">
                 <!-- Header with logos -->
                 <div class="logo-container">
-                    <img src="{{ asset('images/dot-logo.png') }}" alt="DoT Logo">
-                    <img src="{{ asset('images/5g-hackathon-logo.png') }}" alt="5G Hackathon Logo">
+                    <img src="{{ asset('assets/images/dot-logo.jpg') }}" alt="DoT Logo">
+                    <img src="{{ asset('assets/images/five-g.png') }}" alt="5G Hackathon Logo">
                 </div>
-                
+
                 <div class="card shadow">
                     <div class="card-header bg-success text-white">
                         <h4 class="mb-0">Registration Successful</h4>
@@ -49,7 +49,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="text-center mt-3">
                     <p>Department of Telecommunications | Government of India © 2023</p>
                 </div>
