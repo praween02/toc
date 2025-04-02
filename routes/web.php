@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{DashboardController, InstituteController, VendorController, UserController, RoleController, InstituteUserController, EquipmentSupplierController, VendorInstituteController, EquipmentController, CourseController, PocBsnlController, ProjectTimelineController, TicketController, AskExpertDetailController, EquipmentSpecificationController, PocBsnlUserController, ExpertUserControllerr, SixGUserController, ForgotController, TelecomController, TeamController, PaymentController, ParichayController, WorkshopController, SystemManualController};
+use App\Http\Controllers\{DashboardController, InstituteController, VendorController, UserController, RoleController, InstituteUserController, EquipmentSupplierController, VendorInstituteController, EquipmentController, CourseController, PocBsnlController, ProjectTimelineController, TicketController, AskExpertDetailController, EquipmentSpecificationController, PocBsnlUserController, ExpertUserControllerr, SixGUserController, ForgotController, TelecomController, TeamController, PaymentController, ParichayController, WorkshopController, SystemManualController, EquipmentListController, LabRegistrationController};
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -205,4 +205,18 @@ Route::middleware([
     Route::get('/creare-system-delete/{id}', [SystemManualController::class, 'delete'])->name('system_manual.delete');
     Route::post('system_manual/{id?}', [SystemManualController::class, 'store'])->name('system_manual.store');
     Route::get('/system_manual/getSystemManualList', [SystemManualController::class, 'getSystemManualList'])->name('system_manual.getSystemManualList');
+
+    Route::resource('equipment-list', EquipmentListController::class);
 });
+
+// Public routes for lab registration (accessible without login)
+Route::get('lab-registration', [LabRegistrationController::class, 'showForm'])->name('lab.registration');
+Route::post('lab-registration', [LabRegistrationController::class, 'store'])->name('lab.registration.store');
+Route::get('lab-registration/success', [LabRegistrationController::class, 'success'])->name('lab.registration.success');
+Route::get('/get-subcategories', [LabRegistrationController::class, 'getSubcategories']);
+Route::get('lab-registration-data', [LabRegistrationController::class, 'index'])->name('lab.registration.index');
+
+Route::get('/lab-registration/{id}', [LabRegistrationController::class, 'show'])->name('lab-registration.show');
+Route::get('/lab-registration/{id}/edit', [LabRegistrationController::class, 'edit'])->name('lab-registration.edit');
+Route::put('/lab-registration/{id}', [LabRegistrationController::class, 'update'])->name('lab-registration.update');
+Route::post('/lab-registration/reject', [LabRegistrationController::class, 'reject'])->name('lab-registration.reject');

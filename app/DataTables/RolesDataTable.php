@@ -90,7 +90,8 @@ class RolesDataTable extends DataTable
             Column::make('id'),
             Column::make('name'),
             Column::make('slug'),
-            Column::make('total_users'),
+            Column::make('total_users')
+            ->searchable(false), 
             Column::make('created_at'),
             Column::computed('action')
                   ->exportable(false)
