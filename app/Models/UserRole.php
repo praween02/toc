@@ -5,23 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserInstitute extends Model
+class UserRole extends Model
 {
     use HasFactory;
-    protected $table = 'user_institutes';
+    protected $table = 'user_roles';
     protected $fillable = [
         'user_id',
-        'institute_id'
+        'role_id'
     ];
     
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-    
-    public function institute()
+
+    public function role()
     {
-        return $this->belongsTo(Institute::class, 'institute_id');
+        return $this->belongsTo(Role::class, 'role_id');
     }
-    
 }

@@ -12,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 use Illuminate\Database\Eloquent\Relations\{HasOne,HasManyThrough,HasMany,HasOneThrough};
 
-use App\Models\{Institute,VendorInstitute,Profile,Role,RoleUser,UserPermission};
+use App\Models\{Institute,VendorInstitute,Profile,Role,RoleUser,UserPermission,UserInstitute};
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class User extends Authenticatable
@@ -22,6 +22,9 @@ class User extends Authenticatable
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
+
+
+    // protected $table = "users";
 
     /**
      * The attributes that are mass assignable.
@@ -115,5 +118,15 @@ class User extends Authenticatable
 
     public function role_user(): HasOne {
         return $this->hasOne(RoleUser::class, 'user_id', 'id');
+    }
+
+    public function proposals()
+    {
+        return $this->hasMany(Proposal::class);
+    }
+
+    public function userInstitutes()
+    {
+        return $this->hasMany(UserInstitute::class);
     }
 }

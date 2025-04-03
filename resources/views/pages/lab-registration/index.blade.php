@@ -63,6 +63,55 @@
       // Open the modal
       $('#rejectModal').modal('show');
     }
+
+    // Function to handle approval
+    function approve(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You want to approve this registration?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, approve it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '{{ route("lab-registration.approve") }}',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: id
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire(
+                                'Approved!',
+                                'Registration has been approved successfully.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                response.message || 'Something went wrong.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire(
+                            'Error!',
+                            'Something went wrong. Please try again.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
   
     // Handle the rejection form submission
     $('#rejectForm').on('submit', function(e) {
@@ -73,18 +122,25 @@
         type: 'POST',
         data: $(this).serialize(),
         success: function(response) {
-          // Optionally, show a success message or update the table row's status
           $('#rejectModal').modal('hide');
-          // For example, reload the page or the datatable
-          location.reload();
+          Swal.fire(
+              'Rejected!',
+              'Registration has been rejected successfully.',
+              'success'
+          ).then(() => {
+              location.reload();
+          });
         },
         error: function(xhr) {
-          // Handle errors here (display error message, etc.)
-          alert('Error: ' + xhr.responseText);
+          Swal.fire(
+              'Error!',
+              'Something went wrong. Please try again.',
+              'error'
+          );
         }
       });
     });
-  </script>
+</script>
   
     @include('sections.datatable_js')
 @endpush

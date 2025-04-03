@@ -80,18 +80,27 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                 </li>
 
 
-		<li>
-  			<a href="{{ route('six_g_user.index') }}"><i class="fe-list"></i> <span>{{ __("SixG Application") }}</span></a>
-		</li>
+                  <li>
+                      <a href="{{ route('six_g_user.index') }}"><i class="fe-list"></i> <span>{{ __("SixG Application") }}</span></a>
+                  </li>
 
-
-		<li>
+                  <li>
+                      <a href="{{ route('lab.grading.index') }}"><i class="fe-list"></i> <span>{{ __("Lab Grading") }}</span></a>
+                  </li>
+                  
+		            <li>
                   <a href="{{ route('tickets.index') }}"><i class="fe-menu"></i> <span>{{ __('app.tickets_complaints') }}</span></a>
                 </li>
                 <li>
                   <a href="{{ route('lab.registration.index') }}"><i class="fe-list"></i> <span>{{ __('app.lab_registration_data') }}</span></a>
                 </li>
 
+                <li>
+                  <a href="{{ route('proposal-reviews.institutes', ['institute_id' => App\Helpers\Custom::current_institute_id()]) }}">
+                      <i class="fe-list"></i> <span>{{ __('Proposal Reviews') }}</span>
+                  </a>
+              </li>
+                
                 <li>
                   <a href="#admin_user" data-bs-toggle="collapse"><i class="fe-user-plus"></i><span> {{ __('app.administration') }} </span><span class="menu-arrow"></span></a>
                   <div class="collapse" id="admin_user">

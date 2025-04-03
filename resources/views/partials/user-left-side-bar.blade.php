@@ -53,9 +53,14 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                   <a href="{{ route('six_g_user.index') }}"><i class="fe-list"></i> <span>{{ __("SixG Application") }}</span></a>
                 </li>
 
-		<li>
+		            <li>
                   <a href="{{ route('expert_user_assigned') }}"><i class="fe-list"></i> <span>{{ __('Assigned Expert Application') }}</span></a>
                 </li>
+
+                <li>
+                  <a href="{{ route('proposals.index') }}"><i class="fe-list"></i> <span>{{ __('Proposals') }}</span></a>
+                </li>
+
 
 		@if(check_expert_app_exist())
                 <li>

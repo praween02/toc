@@ -22,4 +22,13 @@ class VendorInstitute extends Model
         'random_id'
     ];
 
+    public function institute()
+    {
+        return $this->belongsTo(Institute::class, 'institute_id');
+    }
+
+    public function vendorZone()
+    {
+        return $this->belongsTo(VendorZone::class, 'vendor_zone_id');
+    }
 }

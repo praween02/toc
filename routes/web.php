@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{DashboardController, InstituteController, VendorController, UserController, RoleController, InstituteUserController, EquipmentSupplierController, VendorInstituteController, EquipmentController, CourseController, PocBsnlController, ProjectTimelineController, TicketController, AskExpertDetailController, EquipmentSpecificationController, PocBsnlUserController, ExpertUserControllerr, SixGUserController, ForgotController, TelecomController, TeamController, PaymentController, ParichayController, WorkshopController, SystemManualController, EquipmentListController, LabRegistrationController};
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\{DashboardController, InstituteController, VendorController, UserController, RoleController, InstituteUserController, EquipmentSupplierController, VendorInstituteController, EquipmentController, CourseController, PocBsnlController, ProjectTimelineController, TicketController, AskExpertDetailController, EquipmentSpecificationController, PocBsnlUserController, ExpertUserControllerr, SixGUserController, ForgotController, TelecomController, TeamController, PaymentController, ParichayController, WorkshopController, SystemManualController, EquipmentListController, LabRegistrationController, ProposalReviewController, ProposalController, LabGradingController};
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -147,7 +148,41 @@ Route::middleware([
 
     Route::get('/applied-6g-application', [SixGUserController::class, 'index'])->name('six_g_user.index');
     Route::get('/view-applied-6g-application/{id}', [SixGUserController::class, 'show'])->name('six_g_user.show');
-
+    Route::get('/lab-grading', [LabGradingController::class, 'index'])->name('lab.grading.index');
+    Route::get('/lab-grading/{id}', [LabGradingController::class, 'show'])->name('lab.grading.show');
+    Route::get('/lab-grading/create', [LabGradingController::class, 'create'])->name('lab.grading.create');
+    Route::post('/lab-grading', [LabGradingController::class, 'store'])->name('lab.grading.store');
+    Route::get('/lab-grading/{id}/edit', [LabGradingController::class, 'edit'])->name('lab.grading.edit');
+    Route::put('/lab-grading/{id}', [LabGradingController::class, 'update'])->name('lab.grading.update');
+    Route::delete('/lab-grading/{id}', [LabGradingController::class, 'destroy'])->name('lab.grading.destroy');
+    // Proposal Routes
+    Route::get('/proposals', [ProposalController::class, 'index'])->name('proposals.index');
+   
+    Route::get('/proposals/create', [ProposalController::class, 'create'])->name('proposals.create');
+    Route::post('/proposals', [ProposalController::class, 'store'])->name('proposals.store');
+    Route::get('/proposals/{proposal}', [ProposalController::class, 'show'])->name('proposals.show');
+    Route::get('/proposals/{proposal}/edit', [ProposalController::class, 'edit'])->name('proposals.edit');
+    Route::put('/proposals/{proposal}', [ProposalController::class, 'update'])->name('proposals.update');
+    Route::delete('/proposals/{proposal}', [ProposalController::class, 'destroy'])->name('proposals.destroy');
+    
+    // Institute-specific proposal review routes
+    Route::get('proposal-reviews/institutes/{institute_id}', [ProposalReviewController::class, 'instituteIndex'])
+        ->name('proposal-reviews.institutes');
+    
+    Route::get('proposal-reviews/{id}', [ProposalReviewController::class, 'show'])
+        ->name('proposal-reviews.show');
+    
+    Route::get('proposal-reviews/{id}/edit', [ProposalReviewController::class, 'edit'])
+        ->name('proposal-reviews.edit');
+    
+    Route::put('proposal-reviews/{id}', [ProposalReviewController::class, 'update'])
+        ->name('proposal-reviews.update');
+    
+    Route::patch('proposal-reviews/{id}/approve', [ProposalReviewController::class, 'approve'])
+        ->name('proposal-reviews.approve');
+    
+    Route::patch('proposal-reviews/{id}/reject', [ProposalReviewController::class, 'reject'])
+        ->name('proposal-reviews.reject');
     Route::get('/application-form-6g-user', [SixGUserController::class, 'create'])->name('six_g_user')->middleware('validate.sixg');
     Route::post('/application-form-6g-user', [SixGUserController::class, 'store'])->name('six_g_user.store');
 
@@ -207,6 +242,7 @@ Route::middleware([
     Route::get('/system_manual/getSystemManualList', [SystemManualController::class, 'getSystemManualList'])->name('system_manual.getSystemManualList');
 
     Route::resource('equipment-list', EquipmentListController::class);
+
 });
 
 // Public routes for lab registration (accessible without login)
@@ -220,3 +256,19 @@ Route::get('/lab-registration/{id}', [LabRegistrationController::class, 'show'])
 Route::get('/lab-registration/{id}/edit', [LabRegistrationController::class, 'edit'])->name('lab-registration.edit');
 Route::put('/lab-registration/{id}', [LabRegistrationController::class, 'update'])->name('lab-registration.update');
 Route::post('/lab-registration/reject', [LabRegistrationController::class, 'reject'])->name('lab-registration.reject');
+Route::post('/lab-registration/approve', [LabRegistrationController::class, 'approve'])->name('lab-registration.approve');
+
+// Proposal Review Routes
+Route::middleware(['auth', 'role:institute'])->group(function () {
+    Route::get('/proposals/{proposal}/review', [ProposalReviewController::class, 'review'])->name('proposals.review');
+    Route::post('/proposals/{proposal}/review', [ProposalReviewController::class, 'store'])->name('proposals.review.store');
+});
+
+// Proposal Status Route (accessible by both users and institutes)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/proposals/{proposal}/status', [ProposalReviewController::class, 'status'])->name('proposals.status');
+});
+
+Route::get('get-team-members', [App\Http\Controllers\ProposalController::class, 'getTeamMembers'])
+    ->name('get.team-members')
+    ->middleware('auth');

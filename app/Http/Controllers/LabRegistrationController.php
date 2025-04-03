@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\DataTables\LabRegistrationDataTable;
 use App\Mail\RejectedEmail;
+use Illuminate\Support\Str;
+use App\Mail\WelcomeEmail;
+use App\Models\UserInstitute;
+use App\Models\UserRole;
+use Illuminate\Support\Facades\DB;
 
 class LabRegistrationController extends Controller
 {
@@ -53,8 +58,7 @@ class LabRegistrationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request){
         $validator = Validator::make($request->all(), [
             'applicant_category' => 'required',
             'subcategory' => 'required',
@@ -244,7 +248,7 @@ class LabRegistrationController extends Controller
         $registration->reject_reason = $request->reason;
         $registration->save();
         // send email to the applicant
-        // Mail::to($registration->email_id)->send(new RejectedEmail($registration));
+        Mail::to($registration->email_id)->send(new RejectedEmail($registration));
     
         return response()->json(['success' => true, 'message' => 'Registration rejected successfully.']);
     }
@@ -271,6 +275,53 @@ class LabRegistrationController extends Controller
         }
 
         return response()->json($subcategories);
+    }
+
+    /**
+     * Approve a registration and create user account.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function approve(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:lab_registrations,id',
+        ]);
+
+        $registration = LabRegistration::findOrFail($request->id);
+        
+        // Generate a random password
+        $password = "TestUser@123";
+        // $password = Str::random(10);
+        
+        // Create user account
+        $user = new \App\Models\User();
+        $user->name = $registration->person_name;
+        $user->email = $registration->email_id;
+        $user->password = Hash::make($password);
+        $user->save();
+
+        // Save role in role_users table
+        $userRole = new UserRole();
+        $userRole->user_id = $user->id;
+        $userRole->role_id = 8; // Role ID for lab registration users
+        $userRole->save();
+
+        // Create user institute record
+        $userInstitute = new UserInstitute();
+        $userInstitute->user_id = $user->id;
+        $userInstitute->institute_id = $registration->institute_id;
+        $userInstitute->save();
+
+        // Update registration status
+        $registration->status = 'approved';
+        $registration->save();
+
+        // Send welcome email
+        Mail::to($registration->email_id)->send(new WelcomeEmail($registration, $password));
+
+        return response()->json(['success' => true, 'message' => 'Registration approved successfully.']);
     }
 }
 

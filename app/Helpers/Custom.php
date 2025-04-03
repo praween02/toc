@@ -49,5 +49,8 @@ class Custom
    public static function check_expert_app_exist() {
         return AskExpertDetail::where('user_id', current_user_id())->count();   
    }
-    
+
+   public static function current_institute_id() {
+        return DB::table('user_institutes')->select('institute_id')->where('user_id', current_user_id())->first()->institute_id ?? 0;
+   }
 }
