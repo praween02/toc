@@ -1,0 +1,1 @@
+<?php /**PATH C:\Users\Deepak\Desktop\toc\resources\views/partials/right-side-bar.blade.php ENDPATH**/ ?>

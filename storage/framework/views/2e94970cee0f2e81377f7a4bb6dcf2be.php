@@ -1,0 +1,2 @@
+<img <?php echo e($attributes->merge(['width' => '250', 'class' => ''])); ?> />
+<?php /**PATH /home/u457512262/domains/dssolution.in/public_html/dot/resources/views/components/authentication-card-logo.blade.php ENDPATH**/ ?>
