@@ -43,8 +43,7 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                 <li>
                   <a href="{{ route('equipments.index') }}"><i class="fe-box"></i> <span>{{ __('app.equipments') }}</span></a>
                 </li>
-
-
+                
                 <li>
                   <a href="{{ route('institutes.index') }}"><i class="fe-book"></i> <span>{{ __('app.institutes') }}</span></a>
                 </li>
@@ -78,8 +77,8 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                 <li>
                   <a href="{{ route('admin.projects_timeline') }}"><i class="fe-menu"></i> <span>{{ __('app.project_timeline') }}</span></a>
                 </li>
-
-		<li>
+                
+		            <li>
                   <a href="{{ route('teams.index') }}"><i class="fe-users"></i> <span>{{ __('app.committee') }}</span></a>
                 </li>
 
@@ -103,13 +102,19 @@ body[data-sidebar-size=condensed] .left-side-menu #sidebar-menu>ul>li>form>a spa
                   <a href="{{ route('payments.index') }}"><i class="fe-list"></i> <span>{{ __("Payment") }}</span></a>
                 </li>
 
-		<li>
+		            <li>
                   <a href="{{ route('tickets.index') }}"><i class="fe-menu"></i> <span>{{ __('app.tickets_complaints') }}</span></a>
                 </li>
+
+                <li>
+                  <a href="{{ route('equipment-list.index') }}"><i class="fe-list"></i> <span>{{ __('app.list_of_equipments') }}</span></a>
+                </li>
+
+                
+
                 <li>
           <a href="{{ route('system_manual.index') }}"><i class="fe-list"></i> <span>{{ __("Document") }}</span></a>
         </li>
-
 
 		@endif
 

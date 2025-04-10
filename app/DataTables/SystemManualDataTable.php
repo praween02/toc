@@ -41,7 +41,15 @@ class SystemManualDataTable extends DataTable
                 return $row->document_title ?? 'N/A';
             })
             ->addColumn('type', function ($row) {
-                return $row->type == 1 ? 'Upload Document' : ($row->type == 2 ? 'Lab Implemention Document' : ($row->type == 3 ? 'UAT Procedure Document' : ($row->type == 4 ? 'UAT Sign Document' : 'Receipt of goods Document')));
+                switch ($row->type) {
+                    case 1: return 'Upload Document';
+                    case 2: return 'Lab Implemention Document';
+                    case 3: return 'UAT Procedure Document';
+                    case 4: return 'UAT Sign Document';
+                    case 5: return 'Receipt of goods Document';
+                    case 6: return 'Training Document';
+                    default: return 'Unknown Document';
+                }
             })
             ->addColumn('date', function ($row) {
                 return $row->date ?? 'N/A';
@@ -84,7 +92,7 @@ class SystemManualDataTable extends DataTable
                 'system_manual.document_title',
                 'system_manual.document_file',
                 'system_manual.type',
-                'system_manual.no_of_page',
+                //'system_manual.no_of_page',
                 'system_manual.date',
                 'equipments.equipment as equipment_name'
             ])->where('system_manual.display', 0);
@@ -147,7 +155,7 @@ class SystemManualDataTable extends DataTable
                 Column::make('type')->title('Type'),
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->name('system_manual.document_file')->title('Document File'),
-                Column::make('no_of_page')->title('No Of Page'),
+                //Column::make('no_of_page')->title('No Of Page'),
 
 
 
@@ -159,7 +167,7 @@ class SystemManualDataTable extends DataTable
                 Column::make('equipment_name')->name('equipments.equipment')->title('Equipments Name')->searchable(true), // Concise title
                 Column::make('document_title')->name('system_manual.document_title')->title('Title')->searchable(true), // Simplified title
                 Column::make('document_file')->title('File'), // Simplified title
-                Column::make('no_of_page')->title('Pages'), // Simplified title
+                //Column::make('no_of_page')->title('Pages'), // Simplified title
                 Column::computed('action')
                     ->exportable(false)
                     ->printable(false)
@@ -176,7 +184,7 @@ class SystemManualDataTable extends DataTable
                     Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
                     Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
                     Column::make('document_file')->title('Document File'),
-                    Column::make('no_of_page')->title('No Of Page'),
+                    //Column::make('no_of_page')->title('No Of Page'),
                     // Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
                     Column::computed('action')
                         ->exportable(false)
@@ -193,7 +201,7 @@ class SystemManualDataTable extends DataTable
                     // Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
                     Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
                     Column::make('document_file')->title('Document File'),
-                    Column::make('no_of_page')->title('No Of Page'),
+                    //Column::make('no_of_page')->title('No Of Page'),
                     Column::make('date')->name('system_manual.date')->title('Signature Date'),
                     Column::computed('action')
                         ->exportable(false)
@@ -210,8 +218,25 @@ class SystemManualDataTable extends DataTable
                     // Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
                     Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
                     Column::make('document_file')->title('Document File'),
-                    Column::make('no_of_page')->title('No Of Page'),
+                    //Column::make('no_of_page')->title('No Of Page'),
                     Column::make('date')->name('system_manual.date')->title('Receipt Of Goods Date'),
+                    Column::computed('action')
+                        ->exportable(false)
+                        ->printable(false)
+                        ->width(60)
+                        ->addClass('text-center'),
+                ];
+            }elseif (request()->typeFilter == '6') {
+                return [
+
+                    Column::make('sno')->title('#')->render('meta.row + meta.settings._iDisplayStart + 1')->orderable(false)->searchable(false),
+                    Column::make('vendor')->name('users.name')->title('Vendor'),
+                    Column::make('type')->name('system_manual.type')->title('Type')->searchable(true),
+                    // Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
+                    Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
+                    Column::make('document_file')->title('Document File'),
+                    //Column::make('no_of_page')->title('No Of Page'),
+                    //Column::make('date')->name('system_manual.date')->title('Receipt Of Goods Date'),
                     Column::computed('action')
                         ->exportable(false)
                         ->printable(false)
@@ -227,7 +252,7 @@ class SystemManualDataTable extends DataTable
                     // Column::make('equipment_name')->name('equipments.equipment')->title('Equipment Name')->searchable(true), // Change column title
                     Column::make('document_title')->name('system_manual.document_title')->title('Document Title')->searchable(true),
                     Column::make('document_file')->title('Document File'),
-                    Column::make('no_of_page')->title('No Of Page'),
+                    //Column::make('no_of_page')->title('No Of Page'),
                     // Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
                     Column::computed('action')
                         ->exportable(false)
