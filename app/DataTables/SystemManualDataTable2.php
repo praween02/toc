@@ -73,7 +73,7 @@ class SystemManualDataTable2 extends DataTable
                 'system_manual.document_title',
                 'system_manual.document_file',
                 'system_manual.type',
-                'system_manual.no_of_page',
+                //'system_manual.no_of_page',
                 'system_manual.date',
                 'users.name as institute_name', // Select the equipment name from the joined table
             ])->whereIn('system_manual.type',['4','5'])->where('system_manual.display',0)->where('created_by',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
@@ -90,7 +90,7 @@ class SystemManualDataTable2 extends DataTable
                 'system_manual.document_title',
                 'system_manual.document_file',
                 'system_manual.type',
-                'system_manual.no_of_page',
+               // 'system_manual.no_of_page',
                 'system_manual.date',
                 'institutes.institute as institute_name', // Select the equipment name from the joined table
             ])->whereIn('system_manual.type',['4','5'])->where('system_manual.display',0)->where('vendor_zones.vendor_id',Auth::user()->id)->orderBy('system_manual.id', 'DESC');
@@ -130,7 +130,7 @@ class SystemManualDataTable2 extends DataTable
                 Column::make('type')->name('system_manual.type')->title('Type'),
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
-                Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
+                //Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
                 Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
                 Column::computed('action')
                     ->exportable(false)
@@ -146,7 +146,7 @@ class SystemManualDataTable2 extends DataTable
                 Column::make('type')->name('system_manual.type')->title('Type'),
                 Column::make('document_title')->name('system_manual.document_title')->title('Document Title'),
                 Column::make('document_file')->title('Document File'),
-                Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
+                //Column::make('no_of_page')->name('system_manual.no_of_page')->title('No Of Page'),
                 Column::make('date')->name('system_manual.date')->title('(Signature / Receipt Of Goods) Date'),
                 
                 

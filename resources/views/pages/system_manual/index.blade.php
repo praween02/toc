@@ -51,6 +51,7 @@
                                     </option>
                                     <option value="5" <?= ($typeFilter == '5') ? 'selected' : ''; ?>>Receipt of
                                         goods</option>
+                                        <option value="6" <?= ($typeFilter == '6') ? 'selected' : ''; ?>>Training Document</option>
                                 </select>
                             </form>
                             <!-- <button type="button" id="filterBtn">Filter</button>
