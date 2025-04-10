@@ -61,7 +61,7 @@
                                     <div class="text-danger mt-2">Only PDF files are allowed for upload.</div>
                                 </div>
 
-                                <div class="mb-3">
+                                <div class="mb-3" style="display:none;">
                                     <label for="no_of_page" class="form-label">No of Pages <span class="req">*</span></label>
                                     <input type="number" name="no_of_page" class="form-control" id="no_of_page"
                                         value="{{ old('no_of_page', $systemManual->no_of_page) }}" required min="1">
