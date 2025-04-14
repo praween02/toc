@@ -91,6 +91,14 @@ class SystemManualController extends Controller
             // Store the file and get the path
             $filePath = $request->file('document_file')->store('documents', 'custom');
         }
+        // For Equipment id required
+        if ($validatedData['type'] == 1 && $request->input('equipment_id') <= 0) {
+            return redirect()->back()->withInput()->with('error', 'Equipment ID is required.');
+        }
+        // For UAT Sign documnet id required
+        if ($validatedData['type'] == 4 && $validatedData['type'] == NULL) {
+            return redirect()->back()->withInput()->with('error', 'Sign date is required.');
+        }
         $currentDate = Carbon::now();
         // You can format the date as well
         // $formattedDate = $currentDate->format('Y-m-d');
@@ -104,7 +112,7 @@ class SystemManualController extends Controller
                 'document_file' => $filePath,
                 'no_of_page' => $validatedData['no_of_page'],
                 'type' => $validatedData['type'],
-                'date' => $request->input('date',null),
+                'date' => $request->input('date', null),
                 'created_by' => Auth::user()->id,
             ]
         );

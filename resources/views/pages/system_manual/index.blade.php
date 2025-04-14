@@ -44,14 +44,15 @@
                                         Manual
                                     </option>
                                     <option value="2" <?= ($typeFilter == '2') ? 'selected' : ''; ?>>Lab Implemention
-                                        </option>
+                                    </option>
                                     <option value="3" <?= ($typeFilter == '3') ? 'selected' : ''; ?>>UAT
                                         Procedure</option>
                                     <option value="4" <?= ($typeFilter == '4') ? 'selected' : ''; ?>>UAT Sign
                                     </option>
                                     <option value="5" <?= ($typeFilter == '5') ? 'selected' : ''; ?>>Receipt of
                                         goods</option>
-                                        <option value="6" <?= ($typeFilter == '6') ? 'selected' : ''; ?>>Training Document</option>
+                                    <option value="6" <?= ($typeFilter == '6') ? 'selected' : ''; ?>>Training Document</option>
+                                    <option value="7" <?= ($typeFilter == '7') ? 'selected' : ''; ?>>Document</option>
                                 </select>
                             </form>
                             <!-- <button type="button" id="filterBtn">Filter</button>
